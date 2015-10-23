@@ -11,7 +11,7 @@ def prelogin(request):
 
     return login(request)
 
-@login_required
+# @login_required
 def home(request):
 
     c = RequestContext(request)
