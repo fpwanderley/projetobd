@@ -1,0 +1,28 @@
+/*
+
+* Override Pages default styles or create your own styles here
+
+*/
+
+.own-readonly {
+	background: white !important;
+}
+
+.input-group-btn:last-child>.btn {
+	margin-left: 0 !important;
+}
+
+.has-error label {
+  color: #f55753 !important;
+}
+
+.login-wrapper .bg-pic > img {
+  height: auto !important;
+  opacity: 1 !important;
+}
+
+.login-wrapper .bg-caption {
+  width: 600px !important;
+}
+
+object { display: none; }   

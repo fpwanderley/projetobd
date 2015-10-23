@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Login {% endblock %}
+{% load staticfiles %}
+
+  {% block body_content %}
+    <!-- START PAGE-CONTAINER -->
+    <div class="login-wrapper">
+      <!-- START Login Background Pic Wrapper-->
+      <div class="bg-pic">
+        <!-- START Background Pic-->
+        <img src="{% static 'assets/img/por-do-sol-sitio-cabelo.jpg' %}" data-src="{% static 'assets/img/por-do-sol-sitio-cabelo.jpg' %}" data-src-retina="{% static 'assets/img/por-do-sol-sitio-cabelo.jpg' %}" alt="" class="lazy">
+        <!-- END Background Pic-->
+        <!-- START Background Caption-->
+        <div class="bg-caption pull-bottom sm-pull-bottom text-white p-l-20 m-b-20">
+          <h2 class="semi-bold text-white">
+          A Locus trabalha para que você gaste seu tempo com o que realmente importa</h2>
+          <p class="small">
+            Com o Locus Check, o gerenciamento de pontos fica muito mais simples.
+          </p>
+        </div>
+        <!-- END Background Caption-->
+      </div>
+      <!-- END Login Background Pic Wrapper-->
+      <!-- START Login Right Container-->
+      <div class="login-container bg-white">
+        <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40">
+          <img src="{% static 'assets/img/logo.png' %}" alt="logo" data-src="{% static 'assets/img/logo.png' %}" data-src-retina="assets/img/logo_2x.png">
+          <p class="p-t-35">Entre para acessar o Locus-Check</p>
+          <!-- START Login Form -->
+          <form id="form-login" class="p-t-15" role="form" action="index.html">
+            <!-- START Form Control-->
+            <div class="form-group">
+              <label>Usuário</label>
+              <div class="controls">
+                <input type="text" name="username" class="form-control" required>
+              </div>
+            </div>
+            <!-- END Form Control-->
+            <!-- START Form Control-->
+            <div class="form-group">
+              <label>Senha</label>
+              <div class="controls">
+                <input type="password" class="form-control" name="password" required>
+              </div>
+            </div>
+            <!-- START Form Control-->
+            <div class="row">
+              <div class="col-md-6 no-padding">
+                <div class="checkbox ">
+                  <input type="checkbox" value="1" id="checkbox1">
+                  <label for="checkbox1">Mantenha-me conectado</label>
+                </div>
+              </div>
+            </div>
+            <!-- END Form Control-->
+            <button class="btn btn-primary btn-cons m-t-10" type="submit">Entrar</button>
+          </form>
+          <!--END Login Form-->
+        </div>
+      </div>
+      <!-- END PAGE CONTENT WRAPPER -->
+    </div>
+  {% endblock %}
+  {% block body_script %}
+    <script>
+        $(function()
+        {
+          $('#form-login').validate()
+        })
+    </script>
+  {% endblock %}

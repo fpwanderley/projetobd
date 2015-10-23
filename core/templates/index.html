@@ -1,9 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Home</title>
-</head>
-<body>
-ASD
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Check {% endblock %}
+{% load staticfiles %}
+{% block head_script %}
+function certificateUploadSuccess()
+      {
+          document.getElementById("buttonNotification").click();
+      }
+{% endblock %}
+{% block body_class %}menu-behind{% endblock %}
+{% block body_content %}
+    <div class="page-container">
+        {% include 'header_nav.html' %}
+        <div class="page-content-wrapper">
+            <div class="content">
+                <div class="container-fluid container-fixed-lg bg-white">
+                    <div class="panel panel-transparent">
+                    
+                    </div> 
+                </div>
+            </div>
+        </div>
+        {% include "footer_nav.html" %}
+    </div>
+{% endblock %}
+{% block body_script %}
+    <script src="{% static 'assets/js/notifications.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/js/datatables.js' %}" type="text/javascript"></script>
+{% endblock %}
