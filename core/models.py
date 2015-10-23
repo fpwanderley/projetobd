@@ -3,9 +3,10 @@
 from django.db import models
 from django.utils import timezone
 from . import Constraints as const
+from django.contrib.auth.models import User
 
 # Create your models here.
-class Funcionario(models.Model):
+class Funcionario(User):
 
     sexo = models.CharField(verbose_name="Sexo",
                             choices=const.SEXO_CHOICES,
@@ -23,19 +24,32 @@ class Funcionario(models.Model):
 
     telefone = models.CharField(verbose_name="Telefone",
                                 max_length=20,
-                                default=const.VAZIO)
+                                default=const.VAZIO,
+                                blank=True,
+                                null=True)
 
-    email = models.EmailField(verbose_name="Email",
+    # Email criado com CamelCase por conta de atributo de mesmo nome na classe User.
+    Email = models.EmailField(verbose_name="Email",
                               max_length=30,
                               default=const.VAZIO)
 
-    endereço = models.CharField(verbose_name="Endereço",
+    endereco = models.CharField(verbose_name="Endereço",
                                 max_length=20,
-                                default=const.VAZIO)
+                                default=const.VAZIO,
+                                blank=True,
+                                null=True)
 
     cep = models.CharField(verbose_name="CEP",
                            max_length=10,
-                           default=const.VAZIO)
+                           default=const.VAZIO,
+                           blank=True,
+                           null=True)
+
+    caminho_foto = models.CharField(verbose_name="Caminho para a Foto",
+                                    max_length=40,
+                                    default=const.VAZIO,
+                                    blank=True,
+                                    null=True)
 
 class Turno(models.Model):
 
@@ -53,9 +67,11 @@ class Turno(models.Model):
 
 class Cargo(models.Model):
 
-    nome = models.CharField(verbose_name="Descrição do Cargo",
-                            max_length=50,
-                            default=const.NOME_DEFAULT)
+    descricao = models.CharField(verbose_name="Descrição do Cargo",
+                                 max_length=50,
+                                 default=const.DESCRICAO_DEFAULT,
+                                 blank=True,
+                                 null=True)
 
     horas_diarias = models.IntegerField(verbose_name="Horas Diárias",
                                         default=const.HORAS_DIARIAS_DEFAULT)
@@ -69,6 +85,9 @@ class Cargo(models.Model):
                                   max_length=10,
                                   choices=const.TIPO_CARGO_CHOICES,
                                   default=const.TIPO_CARGO_CHOICES[0][0])
+
+    def __str__(self):
+        return self.tipo_cargo + ': ' + self.descricao
 
 class AtribuicaoCargo(models.Model):
 
