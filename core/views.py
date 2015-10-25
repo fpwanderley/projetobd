@@ -70,3 +70,5 @@ def user_checkin(request):
 
     user = request.user
 
+    user.iniciar_turno()
+
