@@ -12,12 +12,27 @@ function certificateUploadSuccess()
 {% block body_content %}
     <div class="page-container">
         {% include 'header_nav.html' %}
-        <div class="page-content-wrapper">
-            <div class="content">
-                <div class="container-fluid container-fixed-lg bg-white">
-                    <div class="panel panel-transparent">
-                    
-                    </div> 
+        <div class="page-content-wrapper index_size bg-white">
+            <div class="container-fluid container-fixed-lg ">
+                <h1>Check</h1>
+                <hr>
+                <div class="col-md-10">
+                    <div class="col-md-6 center_aligned">
+                        <h3 id="time_check" class="text-danger">00:00:00</h3>
+                    </div>
+                    <div class="col-md-6 center_aligned">
+                        <button id="check_button" class="btn btn-success btn-cons">Checkin</button>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="col-md-12 rounded_box">
+                        <div class="pad bg-primary-lighter"><p id="check_today" class="fs-14 margin_bottom_0px"></p></div>
+                        <div id="check_times" align="" class="pad bg-white">
+                        </div>
+                        <div class="pad bg-complete-lighter">
+                            <p id="check_total" class="fs-14 margin_bottom_0px">Total = 08:00:00</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -27,4 +42,5 @@ function certificateUploadSuccess()
 {% block body_script %}
     <script src="{% static 'assets/js/notifications.js' %}" type="text/javascript"></script>
     <script src="{% static 'assets/js/datatables.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/js/index.js' %}" type="text/javascript"></script>
 {% endblock %}
