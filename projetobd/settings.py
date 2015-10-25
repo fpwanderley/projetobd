@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -90,7 +91,7 @@ DATABASES['default'] = dj_database_url.config()
 
 LANGUAGE_CODE = 'pt_BR'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Recife'
 
 USE_I18N = True
 

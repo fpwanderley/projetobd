@@ -6,6 +6,7 @@ new_db:
 	createdb projetodb
 	python manage.py makemigrations
 	python manage.py migrate
+	python manage.py shell < ScriptSuperUser.py
 
 deps:
 	pip install -r requirements.txt
@@ -22,3 +23,6 @@ migrations:
 
 create_user:
 	python manage.py createsuperuser
+
+save_db:
+	pg_dump projetodb > ProjetoBDDump.sql
