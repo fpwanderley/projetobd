@@ -26,3 +26,37 @@
 }
 
 object { display: none; }   
+
+.index_size{
+    height: calc(100% - 70px);
+    min-height: 0 !important;
+    overflow: auto;
+    padding-top: 60px;
+    margin-bottom: 15px;
+}   
+
+.center_aligned > h3{
+    display: inline-block !important;
+}
+
+.center_aligned{
+    margin: auto;
+    float: none;
+    display: block;
+    text-align: center;
+}
+
+.rounded_box{
+    border: 1px solid #DDD;
+    border-radius: 5px;
+    text-align: center;
+    padding: 0px;
+}
+
+.rounded_box > .pad{
+    padding: 5px;
+}
+
+.margin_bottom_0px{
+    margin-bottom: 0px;
+}
