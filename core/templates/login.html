@@ -2,6 +2,7 @@
 
 {% block title %}Login {% endblock %}
 {% load staticfiles %}
+{% load widget_tweaks %}
 
   {% block body_content %}
     <!-- START PAGE-CONTAINER -->
@@ -28,22 +29,44 @@
           <img src="{% static 'assets/img/logo.png' %}" alt="logo" data-src="{% static 'assets/img/logo.png' %}" data-src-retina="assets/img/logo_2x.png">
           <p class="p-t-35">Entre para acessar o Locus-Check</p>
           <!-- START Login Form -->
-          <form id="form-login" class="p-t-15" role="form" action="index.html">
+          <form id = "LoginForm" role="form" action = "{% url 'core:login' %}" method = "POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
             <!-- START Form Control-->
+            {% if error_message %}
             <div class="form-group">
               <label>Usuário</label>
               <div class="controls">
-                <input type="text" name="username" class="form-control" required>
+                {% render_field LoginForm.username class="form-control" %}
               </div>
             </div>
             <!-- END Form Control-->
             <!-- START Form Control-->
-            <div class="form-group">
+            <div class="form-group has-error">
               <label>Senha</label>
               <div class="controls">
-                <input type="password" class="form-control" name="password" required>
+                {% render_field LoginForm.password class="form-control" %}
+                <span class="help-block">{{error_message}}</span>
               </div>
             </div>
+            {% else %}
+            <div class="form-group">
+              <label>Usuário</label>
+              <div class="controls">
+                {% render_field LoginForm.username class="form-control" %}
+              </div>
+            </div>
+            <!-- END Form Control-->
+            <!-- START Form Control-->
+            <div class="form-group ">
+              <label>Senha</label>
+              <div class="controls">
+                {% render_field LoginForm.password class="form-control" %}
+              </div>
+            </div>
+            {% endif %}
+
+
             <!-- START Form Control-->
             <div class="row">
               <div class="col-md-6 no-padding">

@@ -26,7 +26,9 @@
 <div class=" pull-left sm-table">
   <div class="header-inner">
     <div class="brand inline">
-      <img src="{% static 'assets/img/logo.png' %}" alt="logo" data-src="{% static 'assets/img/logo.png' %}" data-src-retina="{% static 'assets/img/logo_2x.png' %}" width="126" height="22">
+      <a href="{% url 'core:home'%}">
+        <img src="{% static 'assets/img/logo.png' %}" alt="logo" data-src="{% static 'assets/img/logo.png' %}" data-src-retina="{% static 'assets/img/logo_2x.png' %}" width="126" height="22">
+      </a>
     </div>
   </div>
 </div>
@@ -46,7 +48,7 @@
         <li><a href="config.html"><i class="pg-settings_small"></i> Configurações</a>
         </li>
         <li class="bg-master-lighter">
-          <a href="#" class="clearfix">
+          <a href="{% url 'core:logout'%}" class="clearfix">
             <span class="pull-left">Sair</span>
             <span class="pull-right"><i class="fa fa-power-off"></i></span>
           </a>

@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'widget_tweaks',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -114,3 +115,6 @@ try:
     from .local_settings import *
 except ImportError:
     pass
+
+LOGIN_URL = 'core:login'
+LOGIN_REDIRECT_URL = '/'
