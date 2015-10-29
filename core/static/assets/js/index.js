@@ -12,10 +12,16 @@ function stringToTime(){
 }
 
 $(document).ready(function() {
-    $("#check_today").html(currentDay());
-    $("#time_check").html(cargaHoraria);
-    updateClock();
+    if($("#check_today").html() == "xx/xx/xxxx"){
+        $("#check_today").html(currentDay());
+    }
+    if($("#time_check").html() == "xx:xx:xx"){
+        $("#time_check").html(cargaHoraria);
+    }else{
+        cargaHoraria = $("#time_check").html();
+    }
     stringToTime();
+    updateClock();
 })
 
 function updateClock(){

@@ -2,35 +2,32 @@
 
 {% block title %}Check {% endblock %}
 {% load staticfiles %}
-{% block head_script %}
-function certificateUploadSuccess()
-      {
-          document.getElementById("buttonNotification").click();
-      }
-{% endblock %}
 {% block body_class %}menu-behind{% endblock %}
 {% block body_content %}
     <div class="page-container">
         {% include 'header_nav.html' %}
         <div class="page-content-wrapper index_size bg-white">
             <div class="container-fluid container-fixed-lg ">
-                <h1>Check</h1>
+                <h1>Checkin</h1>
                 <hr>
                 <div class="col-md-10">
                     <div class="col-md-6 center_aligned">
-                        <h3 id="time_check" class="text-danger">00:00:00</h3>
+                        <h3 id="time_check" class="text-danger">{% if horas_faltando %}{{ horas_faltando }}{% else %}xx:xx:xx{% endif %}</h3>
                     </div>
                     <div class="col-md-6 center_aligned">
-                        <button id="check_button" class="btn btn-success btn-cons">Checkin</button>
+                        <button id="check_button" class="btn {% if estado_usuario %}btn-danger{% else %}btn-success{% endif %} btn-cons">{% if estado_usuario %}Checkout{% else %}Checkin{% endif %}</button>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="col-md-12 rounded_box">
-                        <div class="pad bg-primary-lighter"><p id="check_today" class="fs-14 margin_bottom_0px"></p></div>
+                        <div class="pad bg-primary-lighter"><p id="check_today" class="fs-14 margin_bottom_0px">{% if dia_atual %}{{ dia_atual }}{% else %}xx/xx/xxxx{% endif %}</p></div>
                         <div id="check_times" align="" class="pad bg-white">
+                        {% for checks in turnos_do_dia_do_usuario %}
+                            <p class='fs-14 margin_bottom_0px'> {{ checks.entrada|date:"H:i:s" }} - {{ checks.saida|date:"H:i:s" }} </p>
+                        {% endfor %}
                         </div>
                         <div class="pad bg-complete-lighter">
-                            <p id="check_total" class="fs-14 margin_bottom_0px">Total = 08:00:00</p>
+                            <p id="check_total" class="fs-14 margin_bottom_0px">Total = {% if total_trabalhado %}{{ total_trabalhado.horas }}:{{ total_trabalhado.minutos }}:{{ total_trabalhado.segundos }}{% else %}00:00:00{% endif %}</p>
                         </div>
                     </div>
                 </div>
