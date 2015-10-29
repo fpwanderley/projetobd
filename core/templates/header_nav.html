@@ -36,7 +36,7 @@
   <!-- START User Info-->
   <div class="visible-lg visible-md m-t-10">
     <div class="pull-left p-r-10 p-t-10 fs-16 font-heading">
-      <span class="semi-bold">José</span> <span class="text-master">Araújo</span>
+      <span id="username_tag">{{ user }}</span> 
     </div>
     <div class="dropdown pull-right">
       <button class="profile-dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -45,12 +45,16 @@
     </span>
       </button>
       <ul class="dropdown-menu profile-dropdown" role="menu">
-        <li><a href="config.html"><i class="pg-settings_small"></i> Configurações</a>
-        </li>
+      {% if adm %}
+        <li><a href=""><i class="fs-14 pg-bag"></i> Funcionários</a></li>
+      {% else %}
+        <li><a href="{% url 'core:home'%}"><i class="fs-14 pg-clock"></i> Checkin</a></li>
+      {% endif %}
+      <li><a href=""><i class="pg-settings_small"></i> Configurações</a></li>
+      <li><a href=""><i class="fs-14 pg-charts"></i> Relatórios</a></li>
         <li class="bg-master-lighter">
           <a href="{% url 'core:logout'%}" class="clearfix">
-            <span class="pull-left">Sair</span>
-            <span class="pull-right"><i class="fa fa-power-off"></i></span>
+            <i class="fa fa-power-off"></i>Logout
           </a>
         </li>
       </ul>
