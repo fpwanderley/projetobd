@@ -5,14 +5,36 @@ from django.template import RequestContext, loader
 from .forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 from .models import *
+from datetime import datetime
 
 INACTIVE_USER = 'O usuário está inativo.'
 WRONG_USERNAME_OR_PASSWORD = 'Usuário e senha não conferem.'
 
 @login_required
 def home(request):
-    c = RequestContext(request)
-    return render_to_response('index.html', c)
+
+    if request.method == 'POST':
+        pass
+
+    usuario_logado = Funcionario.get_por_username(request.user.username)
+    dia_atual = datetime.now()
+    dia_atual_string = dia_atual.strftime('%d/%m/%Y')
+    turnos_do_dia_do_usuario = Turno.turnos_por_funcionario_data(usuario_logado)
+    total_trabalhado_hoje = Turno.calcula_horas_turnos(turnos_do_dia_do_usuario)
+    horario_esperado = AtribuicaoCargo.get_horario_esperado_por_funcionario(funcionario=usuario_logado)
+    estado_usuario = usuario_logado.has_turnos_abertos_data(dia_atual.date())
+    horas_faltando = usuario_logado.calcula_total_horas_dia_faltando(data=dia_atual)
+
+    context = RequestContext(request,{
+        'usuario': usuario_logado,
+        'dia_atual': dia_atual_string,
+        'turnos_do_dia': turnos_do_dia_do_usuario,
+        'total_trabalhado': total_trabalhado_hoje,
+        'horario_esperado': horario_esperado,
+        'estado_usuario': estado_usuario,
+        'horas_faltando': horas_faltando
+    })
+    return render_to_response('index.html', context)
 
 @login_required
 def user_logout(request):

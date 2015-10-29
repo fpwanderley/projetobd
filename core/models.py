@@ -51,6 +51,10 @@ class Funcionario(User):
                                     default=const.VAZIO,
                                     blank=True,
                                     null=True)
+    @classmethod
+    def get_por_username(cls, username):
+        return cls.objects.get(username = username)
+
     def has_turno_aberto(self):
         if Turno.turnos_abertos_por_funcionario(funcionario=self):
             return True
@@ -70,10 +74,36 @@ class Funcionario(User):
         ultimo_turno_aberto = Turno.ultimo_turno_aberto_por_funcionario(funcionario=self)
         ultimo_turno_aberto.finalizar_turno()
 
-    def calcula_total_horas_dia(self, dia):
-        turnos_do_dia = Turno.turnos_fechados_por_funcionario_dia(funcionario=self, dia=dia)
+    def calcula_total_horas_dia(self, data):
+        turnos_do_dia = Turno.turnos_fechados_por_funcionario_dia(funcionario=self, data=data)
         total_de_horas = Turno.calcula_horas_turnos(turnos=turnos_do_dia)
         return total_de_horas
+
+    def calcula_total_horas_dia_faltando(self, data):
+        from datetime import timedelta
+        total_de_horas_dia = self.calcula_total_horas_dia(data=data)
+
+        horas_esperadas = AtribuicaoCargo.get_horario_esperado_por_funcionario(funcionario=self)
+        timedelta_horas_esperadas = timedelta(hours=horas_esperadas)
+
+        horas = total_de_horas_dia['horas']
+        minutos = total_de_horas_dia['minutos']
+        segundos = total_de_horas_dia['segundos']
+        timedelta_horas_horas_trabalhadas = timedelta(hours=horas, minutes=minutos, seconds=segundos)
+
+        horas_faltando = timedelta_horas_esperadas - timedelta_horas_horas_trabalhadas
+
+        timedelta_dict = timedelta_to_dict(horas_faltando)
+
+        return timedelta_dict
+
+    def has_turnos_abertos_data(self, data):
+        turnos_data = Turno.turnos_por_funcionario_data(funcionario = self, data = data)
+
+        if Turno.has_turno_aberto(turnos_data):
+            return True
+        else:
+            return False
 
 class Turno(models.Model):
 
@@ -81,11 +111,18 @@ class Turno(models.Model):
 
     entrada = models.DateTimeField()
 
-    saida = models.DateTimeField(null=True)
+    saida = models.DateTimeField(blank=True,
+                                 null=True)
 
     @classmethod
     def turnos_por_funcionario(cls, funcionario):
         return cls.objects.filter(funcionario = funcionario)
+
+    @classmethod
+    def turnos_por_funcionario_data(cls, funcionario, data):
+        turnos_funcionario = cls.objects.filter(funcionario = funcionario)
+        turnos_por_funcionario_data = [turno for turno in turnos_funcionario if turno.entrada.date() == data]
+        return turnos_por_funcionario_data
 
     @classmethod
     def turnos_abertos_por_funcionario(cls, funcionario):
@@ -100,9 +137,9 @@ class Turno(models.Model):
         return turnos_fechados
 
     @classmethod
-    def turnos_fechados_por_funcionario_dia(cls, funcionario, dia):
+    def turnos_fechados_por_funcionario_dia(cls, funcionario, data):
         turnos_fechados_funcionario = cls.turnos_fechados_por_funcionario(funcionario=funcionario)
-        turnos_fechados_funcionario_dia = [turno for turno in turnos_fechados_funcionario if turno.saida.day == dia]
+        turnos_fechados_funcionario_dia = [turno for turno in turnos_fechados_funcionario if turno.saida.date() == data]
         return turnos_fechados_funcionario_dia
 
     @classmethod
@@ -121,27 +158,23 @@ class Turno(models.Model):
     @classmethod
     def calcula_horas_turnos(cls, turnos):
 
-        if not cls.has_turno_aberto(turnos=turnos):
-            total_segundos = float()
+        # Filtra os turnos fechados.
+        turnos_fechados = [turno for turno in turnos if not turno.is_open()]
 
-            for turno in turnos:
-                total_segundos += turno.horas_trabalho().total_seconds()
+        total_segundos = float()
 
-            horas, segundos_restantes = divmod(total_segundos, 3600)
-            minutos, segundos_restantes = divmod(segundos_restantes, 60)
-            segundos = segundos_restantes
+        for turno in turnos_fechados:
+            total_segundos += turno.horas_trabalho().total_seconds()
 
-            import pdb;pdb.set_trace()
+        horas, segundos_restantes = divmod(total_segundos, 3600)
+        minutos, segundos_restantes = divmod(segundos_restantes, 60)
+        segundos = segundos_restantes
 
-            return {
-                'horas': int(horas),
-                'minutos': int(minutos),
-                'segundos': int(segundos)
-            }
-
-        else:
-            # Retorna erro
-            pass
+        return {
+            'horas': int(horas),
+            'minutos': int(minutos),
+            'segundos': int(segundos)
+        }
 
     def is_open(self):
         if self.entrada and not self.saida:
@@ -198,8 +231,45 @@ class AtribuicaoCargo(models.Model):
 
     data_inicio = models.DateTimeField()
 
-    data_termino = models.DateTimeField()
+    data_termino = models.DateTimeField(blank=True,
+                                        null=True)
 
+    @classmethod
+    def get_todas_atribuicoes_por_funcionario(cls, funcionario):
+        return cls.objects.filter(funcionario = funcionario)
 
+    @classmethod
+    def get_atribuicoes_abertas_por_funcionario(cls, funcionario):
+        todas_atribuicoes = cls.get_todas_atribuicoes_por_funcionario(funcionario=funcionario)
+        return [atribuicao for atribuicao in todas_atribuicoes if atribuicao.is_open()]
+
+    @classmethod
+    def get_ultima_atribuicao_aberta_por_funcionario(cls, funcionario):
+        todas_atribuicoes_abertas = cls.get_atribuicoes_abertas_por_funcionario(funcionario=funcionario)
+        return todas_atribuicoes_abertas[-1]
+
+    @classmethod
+    def get_horario_esperado_por_funcionario(cls, funcionario):
+        ultima_atribuicao = cls.get_ultima_atribuicao_aberta_por_funcionario(funcionario=funcionario)
+        return ultima_atribuicao.cargo.horas_diarias
+
+    def is_open(self):
+        if self.data_inicio and not self.data_termino:
+            return True
+        else:
+            return False
+
+def timedelta_to_dict(timedelta_obj):
+    total_segundos = timedelta_obj.total_seconds()
+
+    horas, segundos_restantes = divmod(total_segundos, 3600)
+    minutos, segundos_restantes = divmod(segundos_restantes, 60)
+    segundos = segundos_restantes
+
+    return {
+        'horas': int(horas),
+        'minutos': int(minutos),
+        'segundos': int(segundos)
+    }
 
 
