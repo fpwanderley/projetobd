@@ -61,12 +61,41 @@ function updateClock(){
     setTimeout(updateClock, 1000);
 }
 
+var csrftoken = Cookies.get('csrftoken');
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+function checkPost(check){
+    $.ajax({
+      type: "POST",
+      url: "/home/",
+      data: {'check': check},
+      success: function (data) {
+        console.log("Success");
+      },
+      error: function(data) {
+        console.log("Something went wrong!");
+      }
+    });
+}
+
+
 $(document).on({
     click: function (event) {
         if (event.handled !== true) {
             event.handled = true;
             switch($(this).html()){
                 case("Checkin"):
+                    checkPost("Checkin");
                     $(this).removeClass("btn-success");
                     $(this).addClass("btn-danger");
                     $(this).html("Checkout");
@@ -74,6 +103,7 @@ $(document).on({
                     updateTime = 1;
                 break;
                 case("Checkout"):
+                    checkPost("Checkout");
                     $(this).addClass("btn-success");
                     $(this).removeClass("btn-danger");
                     $(this).html("Checkin");
