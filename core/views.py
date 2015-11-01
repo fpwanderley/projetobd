@@ -19,7 +19,7 @@ def home(request):
     usuario_logado = Funcionario.get_por_username(request.user.username)
     dia_atual = datetime.now()
     dia_atual_string = dia_atual.strftime('%d/%m/%Y')
-    turnos_do_dia_do_usuario = Turno.turnos_por_funcionario_data(usuario_logado)
+    turnos_do_dia_do_usuario = Turno.turnos_por_funcionario_data(usuario_logado, data=dia_atual)
     total_trabalhado_hoje = Turno.calcula_horas_turnos(turnos_do_dia_do_usuario)
     horario_esperado = AtribuicaoCargo.get_horario_esperado_por_funcionario(funcionario=usuario_logado)
     estado_usuario = usuario_logado.has_turnos_abertos_data(dia_atual.date())
