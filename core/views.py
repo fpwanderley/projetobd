@@ -14,6 +14,10 @@ WRONG_USERNAME_OR_PASSWORD = 'Usuário e senha não conferem.'
 def home(request):
 
     if request.method == 'POST':
+        check = request.POST['check']
+        print(check)
+        # Checking ou checkout
+        
         pass
 
     usuario_logado = Funcionario.get_por_username(request.user.username)
