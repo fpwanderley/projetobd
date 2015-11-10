@@ -4,11 +4,11 @@ from .models import Funcionario, Cargo, AtribuicaoCargo, Turno
 # Register your models here.
 @admin.register(Funcionario)
 class FuncionarioAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'is_superuser', 'cpf')
+    list_display = ('nome', 'nascimento', 'get_cargo_atual', 'is_superuser', 'is_active', 'cpf')
     list_display_links = ('nome',)
     fieldsets = (
         ('Dados do Funcionario',{
-            'fields': ('nome', 'cpf', 'sexo','Email','telefone', 'endereco', 'cep', 'caminho_foto')
+            'fields': ('nome', 'cpf', 'sexo', 'Email', 'nascimento', 'telefone', 'endereco', 'cep', 'caminho_foto')
         }),
         ('Opcoes Avancadas',{
             'fields': ('username', 'password','is_superuser', 'is_active', 'groups')

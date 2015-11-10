@@ -1,5 +1,10 @@
-__author__ = 'felipe'
-from core.models import Funcionario
+from core.models import Funcionario, Cargo, AtribuicaoCargo
+from datetime import timedelta, datetime
 
-Funcionario.objects.create_superuser(username='pbd',password='projetobd', email='pdb@cin.ufpe.br')
+pdb = Funcionario.objects.create_superuser(username='pbd',password='projetobd', email='pdb@cin.ufpe.br')
+novo_cargo = Cargo(horas_diarias=8, salario=2000)
+novo_cargo.save()
+
+nova_atribuicao = AtribuicaoCargo(funcionario=pdb, cargo=novo_cargo, data_inicio=datetime.now())
+nova_atribuicao.save()
 
