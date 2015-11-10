@@ -113,7 +113,7 @@ function checkPost(check){
       url: "/home/",
       data: {'check': check},
       success: function (data) {
-        // location.reload();
+        location.reload();
       },
       error: function(data) {
       }

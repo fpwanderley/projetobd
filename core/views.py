@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
@@ -15,18 +15,22 @@ def home(request):
 
     if request.method == 'POST':
         check = request.POST['check']
-        print(check)
-        # Checking ou checkout
-        
-        pass
+        username = request.user.username
+
+        funcionario = Funcionario.get_por_username(username)
+
+        if funcionario.has_turno_aberto():
+            funcionario.finalizar_turno()
+        else:
+            funcionario.iniciar_turno()
 
     usuario_logado = Funcionario.get_por_username(request.user.username)
-    dia_atual = datetime.now()
+    dia_atual = datetime.now().date()
     dia_atual_string = dia_atual.strftime('%d/%m/%Y')
     turnos_do_dia_do_usuario = Turno.turnos_por_funcionario_data(usuario_logado, data=dia_atual)
     total_trabalhado_hoje = Turno.calcula_horas_turnos(turnos_do_dia_do_usuario)
     horario_esperado = AtribuicaoCargo.get_horario_esperado_por_funcionario(funcionario=usuario_logado)
-    estado_usuario = usuario_logado.has_turnos_abertos_data(dia_atual.date())
+    estado_usuario = usuario_logado.has_turnos_abertos_data(dia_atual)
     horas_faltando = usuario_logado.calcula_total_horas_dia_faltando(data=dia_atual)
 
     context = RequestContext(request,{
@@ -38,6 +42,7 @@ def home(request):
         'estado_usuario': estado_usuario,
         'horas_faltando': horas_faltando
     })
+
     return render_to_response('index.html', context)
 
 @login_required
