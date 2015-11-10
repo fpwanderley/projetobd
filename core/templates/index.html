@@ -19,8 +19,9 @@
                     <div class="col-md-6 center_aligned">
                         <button id="check_button" class="checkin_button_fix btn {% if estado_usuario %}btn-danger{% else %}btn-success{% endif %} btn-cons">{% if estado_usuario %}Checkout{% else %}Checkin{% endif %}</button>
                     </div>
-                    <div class="col-md-6 center_aligned ">
-                        
+                    <div class="col-md-6 center_aligned">
+                        <h3>Previsao de saida:</h3>
+                        <h3 id="exit_time">{% if previsao_saida %}{{ previsao_saida }}{% else %}08:00:00{% endif %}</h3>
                     </div>
                 </div>
                 <div class="col-md-2">

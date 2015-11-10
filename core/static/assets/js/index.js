@@ -4,11 +4,21 @@ reversed = 1;
 hours = 00;
 minutes = 00;
 seconds = 00;
+exit_hours = 00;
+exit_minutes = 00;
+exit_seconds = 00;
+exit_time = "xx:xx:xx";
 
 function stringToTime(){
     hours = parseInt(cargaHoraria.substring(0,2));
     minutes = parseInt(cargaHoraria.substring(3,5));
     seconds = parseInt(cargaHoraria.substring(6));
+}
+
+function exitStringToTime(){
+    exit_hours = parseInt(exit_time.substring(0,2));
+    exit_minutes = parseInt(exit_time.substring(3,5));
+    exit_seconds = parseInt(exit_time.substring(6));
 }
 
 $(document).ready(function() {
@@ -23,8 +33,11 @@ $(document).ready(function() {
     if($("#check_button").html() == "Checkout"){
         updateTime = 1;
     }
+    exit_time = $("#exit_time").html();
+    exitStringToTime();
     stringToTime();
     updateClock();
+    updateExit();
 })
 
 function updateClock(){
@@ -58,10 +71,27 @@ function updateClock(){
                 }
             } 
         }
-        
         $("#time_check").html(timeToString(hours,minutes,seconds));
     }
     setTimeout(updateClock, 1000);
+}
+
+function updateExit(){
+    if( !updateTime ){
+        if (reversed){
+            exit_seconds += 1;
+            if( exit_seconds >= 60 ){
+                exit_seconds = 0;
+                exit_minutes += 1;
+                if( exit_minutes >= 60 ){
+                    exit_minutes = 0;
+                    exit_hours += 1;
+                }
+            }   
+        }
+        $("#exit_time").html(timeToString(exit_hours,exit_minutes,exit_seconds));
+    }
+    setTimeout(updateExit, 1000);
 }
 
 var csrftoken = Cookies.get('csrftoken');
@@ -83,11 +113,9 @@ function checkPost(check){
       url: "/home/",
       data: {'check': check},
       success: function (data) {
-        console.log("Success");
-        location.reload();
+        // location.reload();
       },
       error: function(data) {
-        console.log("Something went wrong!");
       }
     });
 }

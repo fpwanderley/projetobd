@@ -65,7 +65,3 @@ object { display: none; }
     margin-right: 15px;
     margin-left: 15px;
 }
-
-.checkin_button_fix{
-    margin-left: -160px;
-}
