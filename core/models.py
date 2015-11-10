@@ -106,6 +106,19 @@ class Funcionario(User):
 
         return timedelta_dict
 
+    def calcula_previsao_saida(self, data):
+        horas_faltando = self.calcula_total_horas_dia_faltando(data=data)
+        horas_faltando_timedelta = timedelta(hours = horas_faltando['horas'],
+                                             minutes = horas_faltando['minutos'],
+                                             seconds = horas_faltando['segundos'])
+
+        hora_atual = datetime.now()
+        previsao = hora_atual + horas_faltando_timedelta
+
+        timedelta_dict = datetime_to_dict(previsao)
+
+        return timedelta_dict
+
     def has_turnos_abertos_data(self, data):
         turnos_data = Turno.turnos_por_funcionario_data(funcionario = self, data = data)
 
@@ -274,6 +287,18 @@ def timedelta_to_dict(timedelta_obj):
     horas, segundos_restantes = divmod(total_segundos, 3600)
     minutos, segundos_restantes = divmod(segundos_restantes, 60)
     segundos = segundos_restantes
+
+    return {
+        'horas': int(horas),
+        'minutos': int(minutos),
+        'segundos': int(segundos)
+    }
+
+def datetime_to_dict(datetime_obj):
+
+    horas = datetime_obj.hour
+    minutos = datetime_obj.minute
+    segundos = datetime_obj.second
 
     return {
         'horas': int(horas),
