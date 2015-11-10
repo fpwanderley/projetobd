@@ -10,9 +10,16 @@ exit_seconds = 00;
 exit_time = "xx:xx:xx";
 
 function stringToTime(){
+    if(cargaHoraria.substring(0,1) == "-"){
+        reversed = 0;
+        $("#time_check").removeClass("text-danger");
+        $("#time_check").addClass("text-success");
+        cargaHoraria = cargaHoraria.substring(1);
+    }
     hours = parseInt(cargaHoraria.substring(0,2));
     minutes = parseInt(cargaHoraria.substring(3,5));
     seconds = parseInt(cargaHoraria.substring(6));
+    
 }
 
 function exitStringToTime(){

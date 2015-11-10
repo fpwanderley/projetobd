@@ -13,7 +13,7 @@
                 <div class="col-md-10">
                     <div class="col-md-6 center_aligned">
                         <h3 class="checkout_text">Faltam</h3>
-                        <h3 id="time_check" class="text-danger" expected_time="{{ horario_esperado }}">{% if horas_faltando %}{{ horas_faltando.horas|stringformat:"02d" }}:{{ horas_faltando.minutos|stringformat:"02d" }}:{{ horas_faltando.segundos|stringformat:"02d" }}{% else %}xx:xx:xx{% endif %}</h3>
+                        <h3 id="time_check" class="text-danger" expected_time="{{ horario_esperado }}">{% if horas1_faltando %}{{ horas_faltando.horas|stringformat:"02d" }}:{{ horas_faltando.minutos|stringformat:"02d" }}:{{ horas_faltando.segundos|stringformat:"02d" }}{% else %}xx:xx:xx{% endif %}</h3>
                         <h3 class="checkout_text">para sua meta diaria</h3>
                     </div>
                     <div class="col-md-6 center_aligned">
@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-md-6 center_aligned">
                         <h3>Previsao de saida:</h3>
-                        <h3 id="exit_time">{% if previsao_saida %}{{ previsao_saida }}{% else %}08:00:00{% endif %}</h3>
+                        <h3 id="exit_time">{% if previsao_saida %}{{ previsao_saida.horas|stringformat:"02d" }}:{{ previsao_saida.minutos|stringformat:"02d" }}:{{ previsao_saida.segundos|stringformat:"02d" }}{% else %}08:00:00{% endif %}</h3>
                     </div>
                 </div>
                 <div class="col-md-2">
