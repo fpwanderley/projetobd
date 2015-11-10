@@ -29,6 +29,10 @@ class Funcionario(User):
                                 blank=True,
                                 null=True)
 
+    nascimento = models.DateField(verbose_name="Data de Nascimento",
+                                  blank=True,
+                                  null=True)
+
     # Email criado com CamelCase por conta de atributo de mesmo nome na classe User.
     Email = models.EmailField(verbose_name="Email",
                               max_length=30,
@@ -51,6 +55,13 @@ class Funcionario(User):
                                     default=const.VAZIO,
                                     blank=True,
                                     null=True)
+    def get_cargo_atual(self):
+        ultima_atribuicao = AtribuicaoCargo.get_ultima_atribuicao_aberta_por_funcionario(
+            funcionario=self)
+
+        return ultima_atribuicao.cargo.tipo_cargo + ': ' + ultima_atribuicao.cargo.descricao
+    get_cargo_atual.short_description = 'Cargo Atual'
+
     @classmethod
     def get_por_username(cls, username):
         return cls.objects.get(username = username)

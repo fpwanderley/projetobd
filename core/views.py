@@ -33,6 +33,7 @@ def home(request):
     estado_usuario = usuario_logado.has_turnos_abertos_data(dia_atual)
     horas_faltando = usuario_logado.calcula_total_horas_dia_faltando(data=dia_atual)
     previsao_horario_saida = usuario_logado.calcula_previsao_saida(data=dia_atual)
+    usuario_admin = usuario_logado.is_superuser
 
     context = RequestContext(request,{
         'usuario': usuario_logado,
@@ -42,7 +43,8 @@ def home(request):
         'horario_esperado': horario_esperado,
         'estado_usuario': estado_usuario,
         'horas_faltando': horas_faltando,
-        'previsao_saida': previsao_horario_saida
+        'previsao_saida': previsao_horario_saida,
+        'adm': usuario_admin
     })
 
     return render_to_response('index.html', context)
