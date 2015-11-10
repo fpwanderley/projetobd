@@ -60,3 +60,12 @@ object { display: none; }
 .margin_bottom_0px{
     margin-bottom: 0px;
 }
+
+.checkout_text{
+    margin-right: 15px;
+    margin-left: 15px;
+}
+
+.checkin_button_fix{
+    margin-left: -160px;
+}

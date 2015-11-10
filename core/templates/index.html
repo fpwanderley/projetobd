@@ -8,14 +8,19 @@
         {% include 'header_nav.html' %}
         <div class="page-content-wrapper index_size bg-white">
             <div class="container-fluid container-fixed-lg ">
-                <h1>Checkin</h1>
+                <h1 id="checkin_title">Checkin</h1>
                 <hr>
                 <div class="col-md-10">
                     <div class="col-md-6 center_aligned">
-                        <h3 id="time_check" class="text-danger">{% if horas_faltando %}{{ horas_faltando.horas|stringformat:"02d" }}:{{ horas_faltando.minutos|stringformat:"02d" }}:{{ horas_faltando.segundos|stringformat:"02d" }}{% else %}xx:xx:xx{% endif %}</h3>
+                        <h3 class="checkout_text">Faltam</h3>
+                        <h3 id="time_check" class="text-danger" expected_time="{{ horario_esperado }}">{% if horas_faltando %}{{ horas_faltando.horas|stringformat:"02d" }}:{{ horas_faltando.minutos|stringformat:"02d" }}:{{ horas_faltando.segundos|stringformat:"02d" }}{% else %}xx:xx:xx{% endif %}</h3>
+                        <h3 class="checkout_text">para sua meta diaria</h3>
                     </div>
                     <div class="col-md-6 center_aligned">
-                        <button id="check_button" class="btn {% if estado_usuario %}btn-danger{% else %}btn-success{% endif %} btn-cons">{% if estado_usuario %}Checkout{% else %}Checkin{% endif %}</button>
+                        <button id="check_button" class="checkin_button_fix btn {% if estado_usuario %}btn-danger{% else %}btn-success{% endif %} btn-cons">{% if estado_usuario %}Checkout{% else %}Checkin{% endif %}</button>
+                    </div>
+                    <div class="col-md-6 center_aligned ">
+                        
                     </div>
                 </div>
                 <div class="col-md-2">

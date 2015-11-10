@@ -20,6 +20,9 @@ $(document).ready(function() {
     }else{
         cargaHoraria = $("#time_check").html();
     }
+    if($("#check_button").html() == "Checkout"){
+        updateTime = 1;
+    }
     stringToTime();
     updateClock();
 })
@@ -81,6 +84,7 @@ function checkPost(check){
       data: {'check': check},
       success: function (data) {
         console.log("Success");
+        location.reload();
       },
       error: function(data) {
         console.log("Something went wrong!");
@@ -99,6 +103,7 @@ $(document).on({
                     $(this).removeClass("btn-success");
                     $(this).addClass("btn-danger");
                     $(this).html("Checkout");
+                    $("#checkin_title").html("Checkout");
                     getStartTime();
                     updateTime = 1;
                 break;
@@ -107,8 +112,8 @@ $(document).on({
                     $(this).addClass("btn-success");
                     $(this).removeClass("btn-danger");
                     $(this).html("Checkin");
+                    $("#checkin_title").html("Checkin");
                     getEndTime();
-                    resetTimer();
                     updateTime = 0;
                 break;
             }
@@ -151,10 +156,4 @@ function getStartTime(){
 
 function getEndTime(){
     $("#check_times").children().last().html($("#check_times").children().last().html()+currentTimeToString());
-}
-
-function resetTimer(){
-    $("#time_check_hour").html("00");
-    $("#time_check_minutes").html("00");
-    $("#time_check_seconds").html("00");
 }
