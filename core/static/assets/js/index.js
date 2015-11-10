@@ -83,11 +83,9 @@ function checkPost(check){
       url: "/home/",
       data: {'check': check},
       success: function (data) {
-        console.log("Success");
         location.reload();
       },
       error: function(data) {
-        console.log("Something went wrong!");
       }
     });
 }

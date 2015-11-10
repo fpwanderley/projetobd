@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 from . import Constraints as const
 from django.contrib.auth.models import User
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 # Create your models here.
 class Funcionario(User):
@@ -61,9 +61,12 @@ class Funcionario(User):
         else:
             return False
 
+    def get_turno_aberto(self):
+        return Turno.turnos_abertos_por_funcionario(funcionario=self)[0]
+
     def iniciar_turno(self):
 
-        if not self.has_turno_aberto:
+        if not self.has_turno_aberto():
             novo_turno = Turno(funcionario = self)
             novo_turno.save()
         else:
@@ -76,6 +79,12 @@ class Funcionario(User):
 
     def calcula_total_horas_dia(self, data):
         turnos_do_dia = Turno.turnos_fechados_por_funcionario_dia(funcionario=self, data=data)
+
+        if self.has_turno_aberto():
+            turno_aberto = self.get_turno_aberto()
+            turno_aberto.saida = timezone.now()
+            turnos_do_dia.append(turno_aberto)
+
         total_de_horas = Turno.calcula_horas_turnos(turnos=turnos_do_dia)
         return total_de_horas
 
