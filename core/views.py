@@ -111,10 +111,18 @@ def user_checkin(request):
 def user_report(request):
     from .AuxiliarClasses import Semana
 
+    usuario_logado = Funcionario.get_por_username(request.user.username)
+
     if request.method == 'POST':
         pass
 
     else:
         dados_semana_atual = Semana()
+
+        context = RequestContext(request,{
+            'usuario': usuario_logado,
+        })
+
+        return render_to_response('report.html', context)
 
 
