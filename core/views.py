@@ -107,3 +107,14 @@ def user_checkin(request):
 
     user.iniciar_turno()
 
+@login_required()
+def user_report(request):
+    from .AuxiliarClasses import Semana
+
+    if request.method == 'POST':
+        pass
+
+    else:
+        dados_semana_atual = Semana()
+
+
