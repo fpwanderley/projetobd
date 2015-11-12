@@ -1,5 +1,9 @@
 $(document).ready(function() {
-    $('#myDatepicker').datepicker();
+    $('#myDatepicker').datepicker({
+        format: 'dd/mm/yyyy',
+        startDate: '-30d',
+        endDate: '0'
+    });
 });
 
 var csrftoken = Cookies.get('csrftoken');
