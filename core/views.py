@@ -126,9 +126,8 @@ def user_report(request):
         context = RequestContext(request,{
             'usuario': usuario_logado,
             'dados_semana_contexto': dados_semana_contexto,
-            'ultimos_12_meses': ultimos_12_meses,
-            'ultimos_anos': ultimos_anos
-
+            'months': ultimos_12_meses,
+            'years': ultimos_anos
         })
 
         return render_to_response('report.html', context)
