@@ -46,11 +46,11 @@
       </button>
       <ul class="dropdown-menu profile-dropdown" role="menu">
       {% if adm %}
-        <li><a href=""><i class="fs-14 pg-bag"></i> Funcionários</a></li>
+        <li><a href="/admin/core/funcionario"><i class="fs-14 pg-bag"></i> Funcionários</a></li>
+        <li><a href=""><i class="fs-14 glyphicon glyphicon-stats"></i>Relatórios - ADM</a></li>
       {% else %}
         <li><a href="{% url 'core:home'%}"><i class="fs-14 pg-clock"></i> Checkin</a></li>
       {% endif %}
-      <li><a href=""><i class="pg-settings_small"></i> Configurações</a></li>
       <li><a href=""><i class="fs-14 pg-charts"></i> Relatórios</a></li>
         <li class="bg-master-lighter">
           <a href="{% url 'core:logout'%}" class="clearfix">
