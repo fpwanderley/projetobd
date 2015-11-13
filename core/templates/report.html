@@ -36,16 +36,18 @@
                     </form>
                 </div>
 
-                <div class="col-md-10 center_aligned">
-                    <div id="nvd3_chart" class="line-chart" 
-                      data-line-color="success" 
-                      data-area-color="master"
-                      data-points="true" 
-                      data-point-color="white" 
-                      data-stroke-width="2">
-                        <svg></svg>
+                {% if not chart_type %}
+                    <div class="col-md-10 center_aligned">
+                        <div id="nvd3_chart" class="line-chart" 
+                          data-line-color="success" 
+                          data-area-color="master"
+                          data-points="true" 
+                          data-point-color="white" 
+                          data-stroke-width="2">
+                            <svg></svg>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
         </div>
         {% include "footer_nav.html" %}

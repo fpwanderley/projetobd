@@ -6,36 +6,39 @@ $(document).ready(function() {
     });
 
     if(!chart_type){
-        var chart_type = 1;
+        var chart_type = 0;
     }
 
     if(!json_data){
-        if(chart_type == 1){
+        if(chart_type == 0){
             var json_data = exampleData();
-            nv.addGraph(function() {
-                var chart = nv.models.discreteBarChart()
-                  .x(function(d) { return d.label })    //Specify the data accessors.
-                  .y(function(d) { return d.value })
-                  .staggerLabels(true)    //Too many bars and not enough room? Try staggering labels.
-                  .tooltips(false)        //Don't show tooltips
-                  .showValues(true)       //...instead, show the bar value right on top of each bar.
-                  .transitionDuration(350)
-                  ;
-
-                d3.select('#nvd3_chart svg')
-                  .datum([json_data])
-                  .call(chart);
-
-                nv.utils.windowResize(chart.update);
-
-                return chart;
-            });
         }
     }    
+
+    if(chart_type == 0){
+        nv.addGraph(function() {
+            var chart = nv.models.discreteBarChart()
+              .x(function(d) { return d.label })    //Specify the data accessors.
+              .y(function(d) { return d.value })
+              .staggerLabels(true)    //Too many bars and not enough room? Try staggering labels.
+              .tooltips(false)        //Don't show tooltips
+              .showValues(true)       //...instead, show the bar value right on top of each bar.
+              .transitionDuration(350)
+              ;
+
+            d3.select('#nvd3_chart svg')
+              .datum([json_data])
+              .call(chart);
+
+            nv.utils.windowResize(chart.update);
+
+            return chart;
+        });
+    }
 });
 
 function generateDiscreteBarChart(){
-    
+
 }
 
 var csrftoken = Cookies.get('csrftoken');
