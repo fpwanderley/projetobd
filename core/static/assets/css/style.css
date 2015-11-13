@@ -81,3 +81,23 @@ object { display: none; }
 .cursor_pointer{
     cursor: pointer;
 }
+
+#nvd3_chart svg {
+  height: 400px;
+}
+
+.report_form_inputs{
+    height: 40px;
+}
+
+/* Negative = #D62728 */
+.negative_hours{
+    fill: rgb(214, 39, 40) !important; 
+    stroke: rgb(214, 39, 40) !important;
+}
+
+/* Positive = #2CA044 */
+.positive_hours{
+    fill: rgb(44, 160, 44) !important;
+    stroke: rgb(44, 160, 44) !important;
+}
