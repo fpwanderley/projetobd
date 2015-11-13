@@ -72,6 +72,16 @@ class Funcionario(User):
         else:
             return False
 
+    def deve_hora_dia(self, data):
+        total_horas = self.calcula_total_horas_dia(data=data)['horas']
+        horas_esperadas = AtribuicaoCargo.get_horario_esperado_por_funcionario(funcionario=self)
+
+        if total_horas < horas_esperadas:
+            return True
+        else:
+            return False
+
+
     def get_turno_aberto(self):
         return Turno.turnos_abertos_por_funcionario(funcionario=self)[0]
 

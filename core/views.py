@@ -125,7 +125,7 @@ def user_report(request):
 
         context = RequestContext(request,{
             'usuario': usuario_logado,
-            'dados_semana_contexto': dados_semana_contexto,
+            'data': dados_semana_contexto,
             'months': ultimos_12_meses,
             'years': ultimos_anos
         })
