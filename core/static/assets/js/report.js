@@ -5,6 +5,10 @@ $(document).ready(function() {
         endDate: '0'
     });
 
+    if(!json_data){
+        var json_data = exampleData();
+    }
+
     nv.addGraph(function() {
         var chart = nv.models.discreteBarChart()
           .x(function(d) { return d.label })    //Specify the data accessors.
@@ -16,7 +20,7 @@ $(document).ready(function() {
           ;
 
         d3.select('#nvd3_chart svg')
-          .datum([exampleData()])
+          .datum([json_data])
           .call(chart);
 
         nv.utils.windowResize(chart.update);
