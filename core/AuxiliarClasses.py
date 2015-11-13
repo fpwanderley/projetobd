@@ -1,6 +1,19 @@
 from django.utils import timezone
 from datetime import date, timedelta, datetime
 
+DAY_NUMBER = {
+    1: 'Domingo',
+    2: 'Segunda-Feira',
+    3: 'Terça-Feira',
+    4: 'Quarta-Feira',
+    5: 'Quinta-Feira',
+    6: 'Sexta-Feira',
+    7: 'Sábado',
+}
+
+VERDE = '#2CA044'
+VERMELHO = '#D62728'
+
 def allsundays(year):
     """This code was provided in the previous answer! It's not mine!"""
     d = date(year, 1, 1)                    # January 1st
@@ -44,6 +57,10 @@ def get_week_by_day(day):
 
     return week_number, week_days
 
+def total_horas_dict_to_float(total_horas):
+    total_float = total_horas['horas'] + total_horas['minutos']/60 + total_horas['segundos']/3600
+    return total_float
+
 class Semana(object):
 
     def __init__(self, dia_inicio = None, dia_final = None):
@@ -57,15 +74,27 @@ class Semana(object):
             self.number, self.days = get_week_by_day(day = dia_atual)
 
     def dados_semana_usuario_contexto(self, usuario_logado):
-        dados_diarios = []
 
-        for dia in self.days:
+        data = {}
+        data['key'] = 'Dias da semana'
+
+        dados_diarios = []
+        for idx, dia in enumerate(self.days):
+
+            total_horas = usuario_logado.calcula_total_horas_dia(data = dia)
+
             dados_diario = {}
-            dados_diario['date'] = dia
-            dados_diario['total_horas'] = usuario_logado.calcula_total_horas_dia(data = dia)
+            if usuario_logado.deve_hora_dia(data=dia):
+                dados_diario['color'] = VERMELHO
+            else:
+                dados_diario['color'] = VERDE
+            dados_diario['label'] = DAY_NUMBER[idx+1]
+            dados_diario['value'] = total_horas_dict_to_float(total_horas)
             dados_diarios.append(dados_diario)
 
-        return dados_diarios
+        data['values'] = dados_diarios
+
+        return data
 
 
 
