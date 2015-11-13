@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 from . import Constraints as const
 from django.contrib.auth.models import User
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 
 # Create your models here.
 class Funcionario(User):
@@ -137,6 +137,80 @@ class Funcionario(User):
             return True
         else:
             return False
+
+    def get_last_12_months_of_work(self):
+
+        def is_after(current_month, data_inicial):
+            current_year = current_month.year
+            current_month = current_month.month
+
+            data_inicial_year = data_inicial.year
+            data_inicial_month = data_inicial.month
+
+            # Ano atual ainda esta depois do ano inicial.
+            if current_year > data_inicial_year:
+                return True
+            elif current_year == data_inicial_year:
+                if current_month >= data_inicial_month:
+                    return True
+                else:
+                    return False
+
+            # Ano Atual esta antes do ano inicial
+            else:
+                return False
+
+        def before_month_date(current_month):
+            month = current_month.month
+            year = current_month.year
+
+            if month == 1:
+                next_month = 12
+                next_year = year - 1
+
+            else:
+                next_month = month - 1
+                next_year = year
+
+            before_date = date(next_year, next_month, 1)
+            return before_date
+
+        def month_number_to_string_tuple(month_number_list):
+            MONTH_TUPLES = {
+                1: ('jan','Janeiro'),
+                2: ('fev','Fevereiro'),
+                3: ('mar','Março'),
+                4: ('abr','Abril'),
+                5: ('mai','Maio'),
+                6: ('jun','Junho'),
+                7: ('jul','Julho'),
+                8: ('ago','Agosto'),
+                9: ('set','Setembro'),
+                10: ('out','Outubro'),
+                11: ('nov','Novembro'),
+                12: ('dez','Dezembro'),
+            }
+
+            return [MONTH_TUPLES[month] for month in month_number_list]
+
+        todas_atribuicoes_ordenadas = AtribuicaoCargo.get_todas_atribuicoes_por_funcionario(funcionario=self).order_by('data_inicio')
+
+        data_inicial = todas_atribuicoes_ordenadas[0].data_inicio.date()
+        data_final = datetime.now().date()
+
+        months = []
+        current_month = data_final
+
+        while (is_after(current_month=current_month,data_inicial=data_inicial) and len(months) <= 12):
+
+            month_tuple = (current_month.month, current_month.year)
+            months.append(month_tuple)
+            current_month = before_month_date(current_month=current_month)
+
+        list_of_months, list_of_years = map(list, zip(*months))
+        list_of_months = month_number_to_string_tuple(month_number_list=list_of_months)
+
+        return list_of_months, list_of_years
 
 class Turno(models.Model):
 

@@ -117,10 +117,17 @@ def user_report(request):
         pass
 
     else:
-        dados_semana_atual = Semana()
+        semana_atual = Semana()
+
+        dados_semana_contexto = semana_atual.dados_semana_usuario_contexto(usuario_logado=usuario_logado)
+
+        ultimos_12_meses, ultimos_anos = usuario_logado.get_last_12_months_of_work()
 
         context = RequestContext(request,{
             'usuario': usuario_logado,
+            'dados_semana_contexto': dados_semana_contexto,
+            'months': ultimos_12_meses,
+            'years': ultimos_anos
         })
 
         return render_to_response('report.html', context)
