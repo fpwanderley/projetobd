@@ -5,29 +5,38 @@ $(document).ready(function() {
         endDate: '0'
     });
 
-    if(!json_data){
-        var json_data = exampleData();
+    if(!chart_type){
+        var chart_type = 1;
     }
 
-    nv.addGraph(function() {
-        var chart = nv.models.discreteBarChart()
-          .x(function(d) { return d.label })    //Specify the data accessors.
-          .y(function(d) { return d.value })
-          .staggerLabels(true)    //Too many bars and not enough room? Try staggering labels.
-          .tooltips(false)        //Don't show tooltips
-          .showValues(true)       //...instead, show the bar value right on top of each bar.
-          .transitionDuration(350)
-          ;
+    if(!json_data){
+        if(chart_type == 1){
+            var json_data = exampleData();
+            nv.addGraph(function() {
+                var chart = nv.models.discreteBarChart()
+                  .x(function(d) { return d.label })    //Specify the data accessors.
+                  .y(function(d) { return d.value })
+                  .staggerLabels(true)    //Too many bars and not enough room? Try staggering labels.
+                  .tooltips(false)        //Don't show tooltips
+                  .showValues(true)       //...instead, show the bar value right on top of each bar.
+                  .transitionDuration(350)
+                  ;
 
-        d3.select('#nvd3_chart svg')
-          .datum([json_data])
-          .call(chart);
+                d3.select('#nvd3_chart svg')
+                  .datum([json_data])
+                  .call(chart);
 
-        nv.utils.windowResize(chart.update);
+                nv.utils.windowResize(chart.update);
 
-        return chart;
-    });
+                return chart;
+            });
+        }
+    }    
 });
+
+function generateDiscreteBarChart(){
+    
+}
 
 var csrftoken = Cookies.get('csrftoken');
 function csrfSafeMethod(method) {
