@@ -5,17 +5,11 @@ $(document).ready(function() {
         endDate: '0'
     });
 
-    if(!chart_type){
-        var chart_type = 0;
-    }
-
-    if(!json_data){
-        if(chart_type == 0){
-            var json_data = exampleData();
-        }
-    }    
-
-    if(chart_type == 0){
+    // console.log(data_values);
+    // console.log(chart_type);
+    // console.log(myData);
+    // console.log(exampleData());
+    if(chart_type == "Dias da semana"){
         nv.addGraph(function() {
             var chart = nv.models.discreteBarChart()
               .x(function(d) { return d.label })    //Specify the data accessors.
@@ -27,7 +21,7 @@ $(document).ready(function() {
               ;
 
             d3.select('#nvd3_chart svg')
-              .datum([json_data])
+              .datum([myData])
               .call(chart);
 
             nv.utils.windowResize(chart.update);
@@ -36,10 +30,6 @@ $(document).ready(function() {
         });
     }
 });
-
-function generateDiscreteBarChart(){
-
-}
 
 var csrftoken = Cookies.get('csrftoken');
 function csrfSafeMethod(method) {

@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
@@ -118,14 +119,14 @@ def user_report(request):
 
     else:
         semana_atual = Semana()
-
+        import json
         dados_semana_contexto = semana_atual.dados_semana_usuario_contexto(usuario_logado=usuario_logado)
-
         ultimos_12_meses, ultimos_anos = usuario_logado.get_last_12_months_of_work()
+        js_data = json.dumps(dados_semana_contexto)
 
         context = RequestContext(request,{
             'usuario': usuario_logado,
-            'data': dados_semana_contexto,
+            'data': js_data,
             'months': ultimos_12_meses,
             'years': ultimos_anos
         })
