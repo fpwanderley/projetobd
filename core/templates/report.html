@@ -36,8 +36,8 @@
                     </form>
                 </div>
 
-                {% if not chart_type %}
-                    <div class="col-md-10 center_aligned">
+                {% if data %}
+                    <div id="my_chart" class="col-md-10 center_aligned" my_data="{{ data }}">
                         <div id="nvd3_chart" class="line-chart" 
                           data-line-color="success" 
                           data-area-color="master"
@@ -58,7 +58,10 @@
     <script src="{% static 'assets/js/notifications.js' %}" type="text/javascript"></script>
     <script src="{% static 'assets/js/datatables.js' %}" type="text/javascript"></script>
     <script type="text/javascript">
-        var myJSONList = (("{{data}}").replace(/&(l|g|quo)t;/g, function(a,b){
+        return_data();
+
+        function return_data(){
+            var myJSONList = (("{{data}}").replace(/&(l|g|quo)t;/g, function(a,b){
                         return {
                             l   : '<',
                             g   : '>',
@@ -66,9 +69,10 @@
                         }[b];
                     }));
 
-        myData = JSON.parse( myJSONList );
-        data_values = myData["values"];
-        chart_type = myData["key"];
+            myData = JSON.parse( myJSONList );
+            data_values = myData["values"];
+            chart_type = myData["key"];
+        }
     </script>
     <script src="{% static 'assets/js/report.js' %}" type="text/javascript"></script>
 {% endblock %}

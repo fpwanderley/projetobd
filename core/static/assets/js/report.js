@@ -4,32 +4,29 @@ $(document).ready(function() {
         startDate: '-30d',
         endDate: '0'
     });
-
-    // console.log(data_values);
-    // console.log(chart_type);
-    // console.log(myData);
-    // console.log(exampleData());
-    if(chart_type == "Dias da semana"){
-        nv.addGraph(function() {
-            var chart = nv.models.discreteBarChart()
-              .x(function(d) { return d.label })    //Specify the data accessors.
-              .y(function(d) { return d.value })
-              .staggerLabels(true)    //Too many bars and not enough room? Try staggering labels.
-              .tooltips(false)        //Don't show tooltips
-              .showValues(true)       //...instead, show the bar value right on top of each bar.
-              .transitionDuration(350)
-              ;
-
-            d3.select('#nvd3_chart svg')
-              .datum([myData])
-              .call(chart);
-
-            nv.utils.windowResize(chart.update);
-
-            return chart;
-        });
-    }
+    generate_chart(myData);
 });
+
+function generate_chart(data){
+    nv.addGraph(function() {
+        var chart = nv.models.discreteBarChart()
+          .x(function(d) { return d.label })    //Specify the data accessors.
+          .y(function(d) { return d.value })
+          .staggerLabels(true)    //Too many bars and not enough room? Try staggering labels.
+          .tooltips(false)        //Don't show tooltips
+          .showValues(true)       //...instead, show the bar value right on top of each bar.
+          .transitionDuration(350)
+          ;
+
+        d3.select('#nvd3_chart svg')
+          .datum([data])
+          .call(chart);
+
+        nv.utils.windowResize(chart.update);
+
+        return chart;
+    });
+}
 
 var csrftoken = Cookies.get('csrftoken');
 function csrfSafeMethod(method) {
@@ -81,13 +78,19 @@ $(document).on({
     }
 }, "#date_input");
 
-function reportPost(type, information){
+function reportPost(request_type, selected_date){
     $.ajax({
       type: "POST",
-      url: "/home/",
-      data: {'type':type, 'info': information},
+      url: "/report/",
+      data: {'request_type':request_type, 'selected_date': selected_date},
+      context: '#my_chart',
       success: function (data) {
-        location.reload();
+        var html = $(data);
+        updated_data = $(data).find("#my_chart").attr("my_data");
+        updated_data = JSON.parse( updated_data );
+        $("#my_chart").replaceWith($(data).find("#my_chart"));
+        generate_chart(updated_data);
+        // $("#my_chart").replaceWith(("#my_chart", html));
       },
       error: function(data) {
       }

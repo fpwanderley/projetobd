@@ -114,23 +114,30 @@ def user_report(request):
 
     usuario_logado = Funcionario.get_por_username(request.user.username)
 
+    ultimos_12_meses, ultimos_anos = usuario_logado.get_last_12_months_of_work()
+
     if request.method == 'POST':
-        pass
+        request_type = request.POST['request_type']
+        selected_date = request.POST['selected_date']
+        print(request_type)
+        print(selected_date)
+        # trocar o js data para o json.dumps() com o contexto correto de acordo com o request type e o selected date
+        js_data = '{"values": [{"color": "#D62728", "label": "Domingo", "value": 0.0}, {"color": "#D62728", "label": "Quarta-Feira", "value": 0.0}, {"color": "#2CA044", "label": "Quinta-Feira", "value": 8.095555555555556}, {"color": "#D62728", "label": "Sexta-Feira", "value": 0.0}, {"color": "#D62728", "label": "S\u00e1bado", "value": 0.0}], "key": "Dias da semana"}'
 
     else:
         semana_atual = Semana()
         import json
         dados_semana_contexto = semana_atual.dados_semana_usuario_contexto(usuario_logado=usuario_logado)
-        ultimos_12_meses, ultimos_anos = usuario_logado.get_last_12_months_of_work()
+        
         js_data = json.dumps(dados_semana_contexto)
 
-        context = RequestContext(request,{
-            'usuario': usuario_logado,
-            'data': js_data,
-            'months': ultimos_12_meses,
-            'years': ultimos_anos
-        })
-
-        return render_to_response('report.html', context)
+    context = RequestContext(request,{
+        'usuario': usuario_logado,
+        'data': js_data,
+        'months': ultimos_12_meses,
+        'years': ultimos_anos
+    })
+    template = loader.get_template('report.html')
+    return HttpResponse(template.render(context))
 
 
