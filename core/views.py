@@ -11,6 +11,8 @@ from datetime import datetime
 INACTIVE_USER = 'O usuário está inativo.'
 WRONG_USERNAME_OR_PASSWORD = 'Usuário e senha não conferem.'
 
+DATE_REQUEST = 'date'
+
 @login_required
 def home(request):
 
@@ -110,7 +112,8 @@ def user_checkin(request):
 
 @login_required()
 def user_report(request):
-    from .AuxiliarClasses import Semana
+    from .AuxiliarClasses import Semana, postformat_to_date
+    import json
 
     usuario_logado = Funcionario.get_por_username(request.user.username)
 
@@ -121,14 +124,19 @@ def user_report(request):
         selected_date = request.POST['selected_date']
         print(request_type)
         print(selected_date)
-        # trocar o js data para o json.dumps() com o contexto correto de acordo com o request type e o selected date
-        js_data = '{"values": [{"color": "#D62728", "label": "Domingo", "value": 0.0}, {"color": "#D62728", "label": "Quarta-Feira", "value": 0.0}, {"color": "#2CA044", "label": "Quinta-Feira", "value": 8.095555555555556}, {"color": "#D62728", "label": "Sexta-Feira", "value": 0.0}, {"color": "#D62728", "label": "S\u00e1bado", "value": 0.0}], "key": "Dias da semana"}'
+
+        if (request_type == DATE_REQUEST):
+            selected_day = postformat_to_date(selected_date)
+            semana_atual = Semana(week_day=selected_day)
+            dados_semana_contexto = semana_atual.dados_semana_usuario_contexto(usuario_logado=usuario_logado)
+
+            # trocar o js data para o json.dumps() com o contexto correto de acordo com o request type e o selected date
+            js_data = json.dumps(dados_semana_contexto)
 
     else:
         semana_atual = Semana()
-        import json
         dados_semana_contexto = semana_atual.dados_semana_usuario_contexto(usuario_logado=usuario_logado)
-        
+
         js_data = json.dumps(dados_semana_contexto)
 
     context = RequestContext(request,{

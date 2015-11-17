@@ -32,7 +32,10 @@ def get_weeks_by_year(year):
 
 def find_day_in_week(day, weeks):
 
-    day_iso_format = day.date().isoformat()
+    if not isinstance(day, date):
+        day_iso_format = day.date().isoformat()
+    else:
+        day_iso_format = day.isoformat()
 
     for week_number, week_days in weeks.items():
 
@@ -42,6 +45,10 @@ def find_day_in_week(day, weeks):
 
 def isoformat_to_date(isoformat_string):
     date = datetime.strptime(isoformat_string, '%Y-%m-%d').date()
+    return date
+
+def postformat_to_date(isoformat_string):
+    date = datetime.strptime(isoformat_string, '%d/%m/%Y').date()
     return date
 
 def get_week_by_day(day):
@@ -63,10 +70,12 @@ def total_horas_dict_to_float(total_horas):
 
 class Semana(object):
 
-    def __init__(self, dia_inicio = None, dia_final = None):
+    def __init__(self, week_day = None):
 
-        if (dia_inicio != None) and (dia_final != None):
-            pass
+        # Considerando a semana onde o week_day está incluso.
+        if (week_day != None):
+            dia_atual = week_day
+            self.number, self.days = get_week_by_day(day = dia_atual)
 
         # Considerar a semana atual.
         else:
