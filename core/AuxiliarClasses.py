@@ -32,7 +32,7 @@ def get_weeks_by_year(year):
 
 def find_day_in_week(day, weeks):
 
-    if not isinstance(day, date):
+    if isinstance(day, datetime):
         day_iso_format = day.date().isoformat()
     else:
         day_iso_format = day.isoformat()
@@ -88,6 +88,7 @@ class Semana(object):
         data['key'] = 'Dias da semana'
 
         dados_diarios = []
+
         for idx, dia in enumerate(self.days):
 
             total_horas = usuario_logado.calcula_total_horas_dia(data = dia)

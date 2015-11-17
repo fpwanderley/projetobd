@@ -12,6 +12,7 @@ INACTIVE_USER = 'O usuário está inativo.'
 WRONG_USERNAME_OR_PASSWORD = 'Usuário e senha não conferem.'
 
 DATE_REQUEST = 'date'
+MONTH_REQUEST = 'month'
 
 @login_required
 def home(request):
@@ -132,6 +133,9 @@ def user_report(request):
 
             # trocar o js data para o json.dumps() com o contexto correto de acordo com o request type e o selected date
             js_data = json.dumps(dados_semana_contexto)
+
+        elif (request_type == MONTH_REQUEST):
+            pass
 
     else:
         semana_atual = Semana()

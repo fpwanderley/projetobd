@@ -99,6 +99,7 @@ class Funcionario(User):
         ultimo_turno_aberto.finalizar_turno()
 
     def calcula_total_horas_dia(self, data):
+        # import pdb;pdb.set_trace()
         turnos_do_dia = Turno.turnos_fechados_por_funcionario_dia(funcionario=self, data=data)
 
         if self.has_turno_aberto():
@@ -256,6 +257,7 @@ class Turno(models.Model):
     @classmethod
     def turnos_fechados_por_funcionario_dia(cls, funcionario, data):
         turnos_fechados_funcionario = cls.turnos_fechados_por_funcionario(funcionario=funcionario)
+        # import pdb;pdb.set_trace()
         turnos_fechados_funcionario_dia = [turno for turno in turnos_fechados_funcionario if turno.saida.date() == data]
         return turnos_fechados_funcionario_dia
 
