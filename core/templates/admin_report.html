@@ -1,0 +1,24 @@
+{% include "report.html" %}
+
+{% block checkin_title %} - Admin{% endblock %}
+
+{% block body_script %}
+    <script type="text/javascript">
+        return_data();
+
+        function return_data(){
+            var myJSONList = (("{{data}}").replace(/&(l|g|quo)t;/g, function(a,b){
+                        return {
+                            l   : '<',
+                            g   : '>',
+                            quo : '"'
+                        }[b];
+                    }));
+
+            myData = JSON.parse( myJSONList );
+            data_values = myData["values"];
+            chart_type = myData["key"];
+            report_type = "adm";
+        }
+    </script>
+{% endblock %}

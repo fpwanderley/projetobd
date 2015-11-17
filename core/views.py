@@ -112,6 +112,7 @@ def user_checkin(request):
 
     user.iniciar_turno()
 
+
 @login_required()
 def user_report(request):
     from .AuxiliarClasses import Semana, postformat_to_date, Mes, Ano
@@ -162,3 +163,19 @@ def user_report(request):
     return HttpResponse(template.render(context))
 
 
+
+@login_required
+def admin_report(request):
+    usuario_logado = Funcionario.get_por_username(request.user.username)
+    usuario_admin = usuario_logado.is_superuser
+    ultimos_12_meses, ultimos_anos = usuario_logado.get_last_12_months_of_work()
+    js_data = '{"values": [{"color": "#D62728", "label": "Fulano", "value": 0.0}, {"color": "#D62728", "label": "Sicrano", "value": 0.0}, {"color": "#2CA044", "label": "Beltrano", "value": 8.095555555555556}, {"color": "#D62728", "label": "Suzano", "value": 0.0}], "key": "Dias da semana"}'
+    context = RequestContext(request,{
+        'usuario': usuario_logado,
+        'data': js_data,
+        'months': ultimos_12_meses,
+        'years': ultimos_anos,
+        'adm': usuario_admin
+    })
+    template = loader.get_template('admin_report.html')
+    return HttpResponse(template.render(context))

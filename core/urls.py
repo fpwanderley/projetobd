@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import home, user_login, user_logout, user_checkin, user_report
+from .views import home, user_login, user_logout, user_checkin, user_report, admin_report
 
 urlpatterns = [
     url(r'^$', home, name='home'),
@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^checkin/$', user_checkin, name='checkout'),
     url(r'^logout/$', user_logout, name='logout'),
     url(r'^report/$', user_report, name='report'),
+    url(r'^admin_report/$', admin_report, name='admin_report'),
 ]
 

@@ -111,9 +111,15 @@ $(document).on({
 }, "#date_input");
 
 function reportPost(request_type, selected_date){
+    target = "";
+    if(report_type == "user"){
+        target = "/report/";
+    }else if(report_type == "adm"){
+        target = "/admin_report/";
+    }
     $.ajax({
       type: "POST",
-      url: "/report/",
+      url: target,
       data: {'request_type':request_type, 'selected_date': selected_date},
       context: '#my_chart',
       success: function (data) {
