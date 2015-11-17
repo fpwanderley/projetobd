@@ -125,8 +125,6 @@ def user_report(request):
     if request.method == 'POST':
         request_type = request.POST['request_type']
         selected_date = request.POST['selected_date']
-        print(request_type)
-        print(selected_date)
 
         if (request_type == DATE_REQUEST):
             selected_day = postformat_to_date(selected_date)
@@ -177,8 +175,6 @@ def admin_report(request):
     if request.method == 'POST':
         request_type = request.POST['request_type']
         selected_date = request.POST['selected_date']
-        print(request_type)
-        print(selected_date)
 
         if (request_type == DATE_REQUEST):
             selected_day = postformat_to_date(selected_date)
