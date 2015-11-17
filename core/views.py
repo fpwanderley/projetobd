@@ -166,6 +166,12 @@ def user_report(request):
 
 @login_required
 def admin_report(request):
+    if request.method == 'POST':
+        request_type = request.POST['request_type']
+        selected_date = request.POST['selected_date']
+        print(request_type)
+        print(selected_date)
+        
     usuario_logado = Funcionario.get_por_username(request.user.username)
     usuario_admin = usuario_logado.is_superuser
     ultimos_12_meses, ultimos_anos = usuario_logado.get_last_12_months_of_work()
