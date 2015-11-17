@@ -98,6 +98,16 @@ class Funcionario(User):
         else:
             return False
 
+    def deve_hora_dias(self, dias):
+        total_horas = self.calcula_total_horas_dias(datas=dias)
+        horas_esperadas_dia = AtribuicaoCargo.get_horario_esperado_por_funcionario(funcionario=self)
+        total_horas_esperadas = len(dias)*horas_esperadas_dia
+
+        if total_horas < total_horas_esperadas:
+            return True
+        else:
+            return False
+
     def deve_hora_semana(self, total_horas):
         horas_esperadas = AtribuicaoCargo.get_horario_esperado_por_funcionario(funcionario=self)
         total_horas_esperadas = DIAS_TRABALHO_SEMANA*horas_esperadas
@@ -106,7 +116,6 @@ class Funcionario(User):
             return True
         else:
             return False
-
 
     def get_turno_aberto(self):
         return Turno.turnos_abertos_por_funcionario(funcionario=self)[0]
@@ -138,12 +147,12 @@ class Funcionario(User):
     def calcula_total_horas_dias(self, datas):
         from .AuxiliarClasses import total_horas_dict_to_float
 
-        total_semana = 0
+        total_horas = 0
         for dia in datas:
             total_dia = self.calcula_total_horas_dia(data=dia, calcula_turno_aberto=False)
-            total_semana += total_horas_dict_to_float(total_dia)
+            total_horas += total_horas_dict_to_float(total_dia)
 
-        return total_semana
+        return total_horas
 
     def calcula_total_horas_dia_faltando(self, data):
         from datetime import timedelta

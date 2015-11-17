@@ -60,7 +60,10 @@ def find_day_in_week(day, weeks):
 
 def find_weeks_in_a_month(month, ano, weeks):
 
-    month_iso_format = str(ano) + '-' + str(month) + '-'
+    if month < 10:
+        month_iso_format = str(ano) + '-0' + str(month) + '-'
+    else:
+        month_iso_format = str(ano) + '-' + str(month) + '-'
 
     selected_weeks = []
     for week_number, week_days in weeks.items():
@@ -72,6 +75,25 @@ def find_weeks_in_a_month(month, ano, weeks):
             selected_weeks.append(week)
 
     return selected_weeks
+
+def find_months_in_a_year(ano,  weeks):
+
+    year_iso_format = str(ano) + '-'
+
+    year_days = []
+    for week_number, week_days in weeks.items():
+        for day in week_days:
+            if (year_iso_format in day):
+                year_days.append(day)
+
+    months = {idx+1: [] for idx in range(12)}
+
+    for day in year_days:
+        month = int(day.split('-')[1])
+        months[month].append(isoformat_to_date(day))
+
+    month_list = [value for key, value in months.items()]
+    return month_list
 
 def isoformat_to_date(isoformat_string):
     date = datetime.strptime(isoformat_string, '%Y-%m-%d').date()
@@ -98,14 +120,16 @@ def total_horas_dict_to_float(total_horas):
     total_float = total_horas['horas'] + total_horas['minutos']/60 + total_horas['segundos']/3600
     return total_float
 
-def get_month_weeks_by_name(month_name):
+def get_month_weeks_by_name(month_name, ano_desejado = None):
 
     mes_atual = timezone.now().date().month
     mes_desejado = MONTH_NAME_TO_INTEGER[month_name]
-    ano_desejado = timezone.now().date().year
 
-    if mes_desejado > mes_atual:
-        ano_desejado = ano_desejado - 1
+    if not ano_desejado:
+        ano_desejado = timezone.now().date().year
+
+        if mes_desejado > mes_atual:
+            ano_desejado = ano_desejado - 1
 
     all_weeks_of_year = get_weeks_by_year(year = ano_desejado)
 
@@ -113,6 +137,13 @@ def get_month_weeks_by_name(month_name):
 
     return weeks
 
+def get_months_by_year(year):
+
+    all_weeks_of_year = get_weeks_by_year(year = year)
+
+    months = find_months_in_a_year(ano=year,  weeks=all_weeks_of_year)
+
+    return months
 
 class Semana(object):
 
@@ -154,9 +185,9 @@ class Semana(object):
 
 class Mes(object):
 
-    def __init__(self, month_name = None):
-
-        self.weeks = get_month_weeks_by_name(month_name = month_name)
+    def __init__(self, month_name = None, year=None):
+        self.month = MONTH_NAME_TO_INTEGER[month_name]
+        self.weeks = get_month_weeks_by_name(month_name = month_name, ano_desejado = year)
 
     def dados_weeks_usuario_contexto(self, usuario_logado):
 
@@ -175,6 +206,50 @@ class Mes(object):
             else:
                 dados_diario['color'] = VERDE
             dados_diario['label'] = 'Semana: ' + str(idx+1)
+            dados_diario['value'] = total_horas
+            dados_diarios.append(dados_diario)
+
+        data['values'] = dados_diarios
+
+        return data
+
+    def retorna_dias_uteis(self):
+
+        dias_uteis = []
+        for week in self.weeks:
+            for dia in week:
+                if (dia.month == self.month) and (dia.weekday() < 5):
+                    dias_uteis.append(dia)
+        return dias_uteis
+
+class Ano(object):
+
+    def __init__(self, year):
+        self.year = year
+        self.months = get_months_by_year(year = year)
+
+    def dados_meses_usuario_contexto(self, usuario_logado):
+
+        from .models import MONTH_TUPLES
+
+        data = {}
+        data['key'] = 'Meses do Ano'
+
+        dados_diarios = []
+
+        for idx, month in enumerate(self.months):
+
+            total_horas = usuario_logado.calcula_total_horas_dias(datas = month)
+
+            month_obj = Mes(month_name=MONTH_TUPLES[idx+1][0], year=self.year)
+            dias_uteis = month_obj.retorna_dias_uteis()
+
+            dados_diario = {}
+            if usuario_logado.deve_hora_dias(dias=dias_uteis):
+                dados_diario['color'] = VERMELHO
+            else:
+                dados_diario['color'] = VERDE
+            dados_diario['label'] = MONTH_TUPLES[idx+1][0]
             dados_diario['value'] = total_horas
             dados_diarios.append(dados_diario)
 

@@ -13,6 +13,7 @@ WRONG_USERNAME_OR_PASSWORD = 'Usuário e senha não conferem.'
 
 DATE_REQUEST = 'date'
 MONTH_REQUEST = 'month'
+YEAR_REQUEST = 'year'
 
 @login_required
 def home(request):
@@ -113,7 +114,7 @@ def user_checkin(request):
 
 @login_required()
 def user_report(request):
-    from .AuxiliarClasses import Semana, postformat_to_date, Mes
+    from .AuxiliarClasses import Semana, postformat_to_date, Mes, Ano
     import json
 
     usuario_logado = Funcionario.get_por_username(request.user.username)
@@ -138,6 +139,11 @@ def user_report(request):
             mes = Mes(month_name=selected_date)
             dados_mes_contexto = mes.dados_weeks_usuario_contexto(usuario_logado=usuario_logado)
             js_data = json.dumps(dados_mes_contexto)
+
+        elif (request_type == YEAR_REQUEST):
+            ano = Ano(year=int(selected_date))
+            dados_ano_contexto = ano.dados_meses_usuario_contexto(usuario_logado=usuario_logado)
+            js_data = json.dumps(dados_ano_contexto)
 
     else:
         semana_atual = Semana()
