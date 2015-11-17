@@ -73,10 +73,13 @@ class Funcionario(User):
                                     blank=True,
                                     null=True)
     def get_cargo_atual(self):
-        ultima_atribuicao = AtribuicaoCargo.get_ultima_atribuicao_aberta_por_funcionario(
-            funcionario=self)
+        try:
+            ultima_atribuicao = AtribuicaoCargo.get_ultima_atribuicao_aberta_por_funcionario(
+                funcionario=self)
+            return ultima_atribuicao.cargo.tipo_cargo + ': ' + ultima_atribuicao.cargo.descricao
+        except:
+            return 'Usuario sem cargo.'
 
-        return ultima_atribuicao.cargo.tipo_cargo + ': ' + ultima_atribuicao.cargo.descricao
     get_cargo_atual.short_description = 'Cargo Atual'
 
     @classmethod
