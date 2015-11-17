@@ -118,7 +118,7 @@ def user_report(request):
     import json
 
     usuario_logado = Funcionario.get_por_username(request.user.username)
-
+    usuario_admin = usuario_logado.is_superuser
     ultimos_12_meses, ultimos_anos = usuario_logado.get_last_12_months_of_work()
 
     if request.method == 'POST':
@@ -155,7 +155,8 @@ def user_report(request):
         'usuario': usuario_logado,
         'data': js_data,
         'months': ultimos_12_meses,
-        'years': ultimos_anos
+        'years': ultimos_anos,
+        'adm': usuario_admin
     })
     template = loader.get_template('report.html')
     return HttpResponse(template.render(context))
