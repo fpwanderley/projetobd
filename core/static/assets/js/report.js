@@ -65,12 +65,18 @@ $.ajaxSetup({
     }
 });
 
+function deselectSelectBox(selector){
+    $(selector+' option:selected').removeAttr('selected');
+    $(selector).find('option[value="-"]').attr("selected",true);
+}
+
 $(document).on({
     change: function (event) {
         if (event.handled !== true) {
             event.handled = true;
-            console.log($(this).val());
             reportPost("month", $(this).val());
+            $("#date_input").val('');
+            deselectSelectBox("#select_year");
         } 
         return false;     
     }
@@ -80,8 +86,9 @@ $(document).on({
     change: function (event) {
         if (event.handled !== true) {
             event.handled = true;
-            console.log($(this).val());
             reportPost("year", $(this).val());
+            $("#date_input").val('');
+            deselectSelectBox("#select_month");
         } 
         return false;     
     }
@@ -93,8 +100,9 @@ $(document).on({
         if (event.handled !== true) {
             event.handled = true;
             if(gate){
-                console.log($(this).val());
                 reportPost("date", $(this).val());
+                deselectSelectBox("#select_year");
+                deselectSelectBox("#select_month");
             }
             gate = (gate + 1 ) % 2;
         } 
