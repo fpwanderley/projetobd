@@ -140,10 +140,12 @@ class Funcionario(User):
     def calcula_total_horas_dia(self, data, calcula_turno_aberto = True):
         turnos_do_dia = Turno.turnos_fechados_por_funcionario_dia(funcionario=self, data=data)
 
-        if calcula_turno_aberto and self.has_turno_aberto():
+        if (calcula_turno_aberto) and (self.has_turno_aberto()):
             turno_aberto = self.get_turno_aberto()
-            turno_aberto.saida = timezone.now()
-            turnos_do_dia.append(turno_aberto)
+
+            if (turno_aberto.entrada.date() == data):
+                turno_aberto.saida = timezone.now()
+                turnos_do_dia.append(turno_aberto)
 
         total_de_horas = Turno.calcula_horas_turnos(turnos=turnos_do_dia)
         return total_de_horas

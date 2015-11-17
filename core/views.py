@@ -112,7 +112,6 @@ def user_checkin(request):
 
     user.iniciar_turno()
 
-
 @login_required()
 def user_report(request):
     from .AuxiliarClasses import Semana, postformat_to_date, Mes, Ano
@@ -140,7 +139,9 @@ def user_report(request):
             js_data = json.dumps(dados_mes_contexto)
 
         elif (request_type == YEAR_REQUEST):
-            ano = Ano(year=int(selected_date))
+            year = int(selected_date)
+            ano = Ano(year = year)
+
             dados_ano_contexto = ano.dados_meses_usuario_contexto(usuario_logado=usuario_logado)
             js_data = json.dumps(dados_ano_contexto)
 

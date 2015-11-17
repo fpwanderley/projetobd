@@ -292,8 +292,9 @@ class Mes(object):
 
 class Ano(object):
 
-    def __init__(self, year, usuarios):
-        self.usuarios = usuarios
+    def __init__(self, year, usuarios=None):
+        if not usuarios:
+            self.usuarios = usuarios
         self.year = year
         self.months = get_months_by_year(year = year)
 
