@@ -113,7 +113,7 @@ def user_checkin(request):
 
 @login_required()
 def user_report(request):
-    from .AuxiliarClasses import Semana, postformat_to_date
+    from .AuxiliarClasses import Semana, postformat_to_date, Mes
     import json
 
     usuario_logado = Funcionario.get_por_username(request.user.username)
@@ -135,7 +135,9 @@ def user_report(request):
             js_data = json.dumps(dados_semana_contexto)
 
         elif (request_type == MONTH_REQUEST):
-            pass
+            mes = Mes(month_name=selected_date)
+            dados_mes_contexto = mes.dados_weeks_usuario_contexto(usuario_logado=usuario_logado)
+            js_data = json.dumps(dados_mes_contexto)
 
     else:
         semana_atual = Semana()

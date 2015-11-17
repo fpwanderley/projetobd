@@ -11,6 +11,21 @@ DAY_NUMBER = {
     7: 'Sábado',
 }
 
+MONTH_NAME_TO_INTEGER ={
+    'jan':1,
+    'fev':2,
+    'mar':3,
+    'abr':4,
+    'mai':5,
+    'jun':6,
+    'jul':7,
+    'ago':8,
+    'set':9,
+    'out':10,
+    'nov':11,
+    'dez':12
+}
+
 VERDE = '#2CA044'
 VERMELHO = '#D62728'
 
@@ -43,6 +58,21 @@ def find_day_in_week(day, weeks):
             week_days_date = [isoformat_to_date(week_day) for week_day in week_days]
             return week_number, week_days_date
 
+def find_weeks_in_a_month(month, ano, weeks):
+
+    month_iso_format = str(ano) + '-' + str(month) + '-'
+
+    selected_weeks = []
+    for week_number, week_days in weeks.items():
+
+        if any([day for day in week_days if month_iso_format in day]):
+
+            week_days_date = [isoformat_to_date(week_day) for week_day in week_days]
+            week = week_days_date
+            selected_weeks.append(week)
+
+    return selected_weeks
+
 def isoformat_to_date(isoformat_string):
     date = datetime.strptime(isoformat_string, '%Y-%m-%d').date()
     return date
@@ -67,6 +97,22 @@ def get_week_by_day(day):
 def total_horas_dict_to_float(total_horas):
     total_float = total_horas['horas'] + total_horas['minutos']/60 + total_horas['segundos']/3600
     return total_float
+
+def get_month_weeks_by_name(month_name):
+
+    mes_atual = timezone.now().date().month
+    mes_desejado = MONTH_NAME_TO_INTEGER[month_name]
+    ano_desejado = timezone.now().date().year
+
+    if mes_desejado > mes_atual:
+        ano_desejado = ano_desejado - 1
+
+    all_weeks_of_year = get_weeks_by_year(year = ano_desejado)
+
+    weeks = find_weeks_in_a_month(month=mes_desejado, ano=ano_desejado,  weeks=all_weeks_of_year)
+
+    return weeks
+
 
 class Semana(object):
 
@@ -106,7 +152,35 @@ class Semana(object):
 
         return data
 
+class Mes(object):
 
+    def __init__(self, month_name = None):
+
+        self.weeks = get_month_weeks_by_name(month_name = month_name)
+
+    def dados_weeks_usuario_contexto(self, usuario_logado):
+
+        data = {}
+        data['key'] = 'Semanas do Mês'
+
+        dados_diarios = []
+
+        for idx, week in enumerate(self.weeks):
+
+            total_horas = usuario_logado.calcula_total_horas_dias(datas = week)
+
+            dados_diario = {}
+            if usuario_logado.deve_hora_semana(total_horas=total_horas):
+                dados_diario['color'] = VERMELHO
+            else:
+                dados_diario['color'] = VERDE
+            dados_diario['label'] = 'Semana: ' + str(idx+1)
+            dados_diario['value'] = total_horas
+            dados_diarios.append(dados_diario)
+
+        data['values'] = dados_diarios
+
+        return data
 
 
 

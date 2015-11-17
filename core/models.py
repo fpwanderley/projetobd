@@ -6,6 +6,23 @@ from . import Constraints as const
 from django.contrib.auth.models import User
 from datetime import timedelta, datetime, date
 
+MONTH_TUPLES = {
+    1: ('jan','Janeiro'),
+    2: ('fev','Fevereiro'),
+    3: ('mar','Março'),
+    4: ('abr','Abril'),
+    5: ('mai','Maio'),
+    6: ('jun','Junho'),
+    7: ('jul','Julho'),
+    8: ('ago','Agosto'),
+    9: ('set','Setembro'),
+    10: ('out','Outubro'),
+    11: ('nov','Novembro'),
+    12: ('dez','Dezembro'),
+}
+
+DIAS_TRABALHO_SEMANA = 5
+
 # Create your models here.
 class Funcionario(User):
 
@@ -81,6 +98,15 @@ class Funcionario(User):
         else:
             return False
 
+    def deve_hora_semana(self, total_horas):
+        horas_esperadas = AtribuicaoCargo.get_horario_esperado_por_funcionario(funcionario=self)
+        total_horas_esperadas = DIAS_TRABALHO_SEMANA*horas_esperadas
+
+        if total_horas < total_horas_esperadas:
+            return True
+        else:
+            return False
+
 
     def get_turno_aberto(self):
         return Turno.turnos_abertos_por_funcionario(funcionario=self)[0]
@@ -98,17 +124,26 @@ class Funcionario(User):
         ultimo_turno_aberto = Turno.ultimo_turno_aberto_por_funcionario(funcionario=self)
         ultimo_turno_aberto.finalizar_turno()
 
-    def calcula_total_horas_dia(self, data):
-        # import pdb;pdb.set_trace()
+    def calcula_total_horas_dia(self, data, calcula_turno_aberto = True):
         turnos_do_dia = Turno.turnos_fechados_por_funcionario_dia(funcionario=self, data=data)
 
-        if self.has_turno_aberto():
+        if calcula_turno_aberto and self.has_turno_aberto():
             turno_aberto = self.get_turno_aberto()
             turno_aberto.saida = timezone.now()
             turnos_do_dia.append(turno_aberto)
 
         total_de_horas = Turno.calcula_horas_turnos(turnos=turnos_do_dia)
         return total_de_horas
+
+    def calcula_total_horas_dias(self, datas):
+        from .AuxiliarClasses import total_horas_dict_to_float
+
+        total_semana = 0
+        for dia in datas:
+            total_dia = self.calcula_total_horas_dia(data=dia, calcula_turno_aberto=False)
+            total_semana += total_horas_dict_to_float(total_dia)
+
+        return total_semana
 
     def calcula_total_horas_dia_faltando(self, data):
         from datetime import timedelta
@@ -187,21 +222,6 @@ class Funcionario(User):
             return before_date
 
         def month_number_to_string_tuple(month_number_list):
-            MONTH_TUPLES = {
-                1: ('jan','Janeiro'),
-                2: ('fev','Fevereiro'),
-                3: ('mar','Março'),
-                4: ('abr','Abril'),
-                5: ('mai','Maio'),
-                6: ('jun','Junho'),
-                7: ('jul','Julho'),
-                8: ('ago','Agosto'),
-                9: ('set','Setembro'),
-                10: ('out','Outubro'),
-                11: ('nov','Novembro'),
-                12: ('dez','Dezembro'),
-            }
-
             return [MONTH_TUPLES[month] for month in month_number_list]
 
         todas_atribuicoes_ordenadas = AtribuicaoCargo.get_todas_atribuicoes_por_funcionario(funcionario=self).order_by('data_inicio')
