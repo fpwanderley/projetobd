@@ -80,6 +80,10 @@ class Funcionario(User):
     get_cargo_atual.short_description = 'Cargo Atual'
 
     @classmethod
+    def get_all(cls):
+        return cls.objects.all()
+
+    @classmethod
     def get_por_username(cls, username):
         return cls.objects.get(username = username)
 
@@ -98,10 +102,10 @@ class Funcionario(User):
         else:
             return False
 
-    def deve_hora_dias(self, dias):
-        total_horas = self.calcula_total_horas_dias(datas=dias)
+    def deve_hora_dias(self, total_dias, dias_uteis):
+        total_horas = self.calcula_total_horas_dias(datas=total_dias)
         horas_esperadas_dia = AtribuicaoCargo.get_horario_esperado_por_funcionario(funcionario=self)
-        total_horas_esperadas = len(dias)*horas_esperadas_dia
+        total_horas_esperadas = len(dias_uteis)*horas_esperadas_dia
 
         if total_horas < total_horas_esperadas:
             return True

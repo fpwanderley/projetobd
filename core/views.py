@@ -166,16 +166,46 @@ def user_report(request):
 
 @login_required
 def admin_report(request):
+    from .AuxiliarClasses import Semana, postformat_to_date, Mes, Ano, Dia
+    import json
+
+    usuarios = Funcionario.get_all()
+    usuario_logado = Funcionario.get_por_username(request.user.username)
+    usuario_admin = usuario_logado.is_superuser
+    ultimos_12_meses, ultimos_anos = usuario_logado.get_last_12_months_of_work()
+
     if request.method == 'POST':
         request_type = request.POST['request_type']
         selected_date = request.POST['selected_date']
         print(request_type)
         print(selected_date)
-        
-    usuario_logado = Funcionario.get_por_username(request.user.username)
-    usuario_admin = usuario_logado.is_superuser
-    ultimos_12_meses, ultimos_anos = usuario_logado.get_last_12_months_of_work()
-    js_data = '{"values": [{"color": "#D62728", "label": "Fulano", "value": 0.0}, {"color": "#D62728", "label": "Sicrano", "value": 0.0}, {"color": "#2CA044", "label": "Beltrano", "value": 8.095555555555556}, {"color": "#D62728", "label": "Suzano", "value": 0.0}], "key": "Dias da semana"}'
+
+        if (request_type == DATE_REQUEST):
+            selected_day = postformat_to_date(selected_date)
+            dia_atual = Dia(dia=selected_day, usuarios=usuarios)
+            dados_dia_contexto = dia_atual.admin_dados_dia_usuarios_contexto()
+
+            # trocar o js data para o json.dumps() com o contexto correto de acordo com o request type e o selected date
+            js_data = json.dumps(dados_dia_contexto)
+
+        elif (request_type == MONTH_REQUEST):
+            mes = Mes(month_name=selected_date, usuarios=usuarios)
+            dados_mes_contexto = mes.admin_dados_mes_usuarios_contexto()
+
+            js_data = json.dumps(dados_mes_contexto)
+
+        elif (request_type == YEAR_REQUEST):
+            ano = Ano(year=int(selected_date), usuarios=usuarios)
+            dados_ano_contexto = ano.admin_dados_ano_usuario_contexto()
+
+            js_data = json.dumps(dados_ano_contexto)
+
+    else:
+        selected_day = timezone.now().date()
+        dia_atual = Dia(dia=selected_day, usuarios=usuarios)
+        dados_dia_contexto = dia_atual.admin_dados_dia_usuarios_contexto()
+        js_data = json.dumps(dados_dia_contexto)
+
     context = RequestContext(request,{
         'usuario': usuario_logado,
         'data': js_data,

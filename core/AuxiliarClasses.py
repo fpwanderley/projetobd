@@ -145,6 +145,48 @@ def get_months_by_year(year):
 
     return months
 
+def get_days_by_weeks(weeks):
+    days = []
+    for week in weeks:
+        days = days + week
+    return days
+
+def get_days_by_months(months):
+    days = []
+    for month in months:
+        days = days + month
+    return days
+
+class Dia(object):
+
+    def __init__(self, usuarios, dia):
+
+        self.usuarios = usuarios
+        self.dia = dia
+
+    def admin_dados_dia_usuarios_contexto(self):
+
+        data = {}
+        data['key'] = 'Relatório Diário'
+        dados_diarios = []
+
+        for idx, usuario in enumerate(self.usuarios):
+
+            total_horas = usuario.calcula_total_horas_dia(data = self.dia)
+
+            dados_diario = {}
+            if usuario.deve_hora_dia(data = self.dia):
+                dados_diario['color'] = VERMELHO
+            else:
+                dados_diario['color'] = VERDE
+            dados_diario['label'] = usuario.nome
+            dados_diario['value'] = total_horas_dict_to_float(total_horas)
+            dados_diarios.append(dados_diario)
+
+        data['values'] = dados_diarios
+
+        return data
+
 class Semana(object):
 
     def __init__(self, week_day = None):
@@ -185,9 +227,10 @@ class Semana(object):
 
 class Mes(object):
 
-    def __init__(self, month_name = None, year=None):
+    def __init__(self, month_name = None, year=None, usuarios=None):
         self.month = MONTH_NAME_TO_INTEGER[month_name]
         self.weeks = get_month_weeks_by_name(month_name = month_name, ano_desejado = year)
+        self.usuarios = usuarios
 
     def dados_weeks_usuario_contexto(self, usuario_logado):
 
@@ -213,6 +256,31 @@ class Mes(object):
 
         return data
 
+    def admin_dados_mes_usuarios_contexto(self):
+
+        data = {}
+        data['key'] = 'Relatório Mensal'
+        dados_diarios = []
+        self.dias = get_days_by_weeks(weeks=self.weeks)
+
+        for idx, usuario in enumerate(self.usuarios):
+
+            total_horas = usuario.calcula_total_horas_dias(datas = self.dias)
+            dias_uteis = self.retorna_dias_uteis()
+
+            dados_diario = {}
+            if usuario.deve_hora_dias(total_dias=self.dias, dias_uteis=dias_uteis):
+                dados_diario['color'] = VERMELHO
+            else:
+                dados_diario['color'] = VERDE
+            dados_diario['label'] = usuario.nome
+            dados_diario['value'] = total_horas
+            dados_diarios.append(dados_diario)
+
+        data['values'] = dados_diarios
+
+        return data
+
     def retorna_dias_uteis(self):
 
         dias_uteis = []
@@ -224,7 +292,8 @@ class Mes(object):
 
 class Ano(object):
 
-    def __init__(self, year):
+    def __init__(self, year, usuarios):
+        self.usuarios = usuarios
         self.year = year
         self.months = get_months_by_year(year = year)
 
@@ -245,11 +314,43 @@ class Ano(object):
             dias_uteis = month_obj.retorna_dias_uteis()
 
             dados_diario = {}
-            if usuario_logado.deve_hora_dias(dias=dias_uteis):
+            if usuario_logado.deve_hora_dias(total_dias=dias_uteis, dias_uteis=dias_uteis):
                 dados_diario['color'] = VERMELHO
             else:
                 dados_diario['color'] = VERDE
             dados_diario['label'] = MONTH_TUPLES[idx+1][0]
+            dados_diario['value'] = total_horas
+            dados_diarios.append(dados_diario)
+
+        data['values'] = dados_diarios
+
+        return data
+
+    def admin_dados_ano_usuario_contexto(self):
+
+        from .models import MONTH_TUPLES
+
+        data = {}
+        data['key'] = 'Relatório Anual'
+        dados_diarios = []
+
+        dias_uteis = []
+        for idx, month in enumerate(self.months):
+            month_obj = Mes(month_name=MONTH_TUPLES[idx+1][0], year=self.year)
+            dias_uteis.append(month_obj.retorna_dias_uteis())
+
+        self.dias = get_days_by_months(self.months)
+
+        for idx, usuario in enumerate(self.usuarios):
+
+            total_horas = usuario.calcula_total_horas_dias(datas = self.dias)
+
+            dados_diario = {}
+            if usuario.deve_hora_dias(total_dias=self.dias, dias_uteis=dias_uteis):
+                dados_diario['color'] = VERMELHO
+            else:
+                dados_diario['color'] = VERDE
+            dados_diario['label'] = usuario.nome
             dados_diario['value'] = total_horas
             dados_diarios.append(dados_diario)
 
