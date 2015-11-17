@@ -133,7 +133,7 @@ class Funcionario(User):
                                              minutes = horas_faltando['minutos'],
                                              seconds = horas_faltando['segundos'])
 
-        hora_atual = datetime.now()
+        hora_atual = timezone.now()
         previsao = hora_atual + horas_faltando_timedelta
 
         timedelta_dict = datetime_to_dict(previsao)
@@ -206,7 +206,7 @@ class Funcionario(User):
         todas_atribuicoes_ordenadas = AtribuicaoCargo.get_todas_atribuicoes_por_funcionario(funcionario=self).order_by('data_inicio')
 
         data_inicial = todas_atribuicoes_ordenadas[0].data_inicio.date()
-        data_final = datetime.now().date()
+        data_final = timezone.now().date()
 
         months = []
         current_month = data_final
