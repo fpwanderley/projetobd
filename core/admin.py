@@ -10,9 +10,9 @@ class FuncionarioAdmin(admin.ModelAdmin):
         ('Dados do Funcionario',{
             'fields': ('nome', 'cpf', 'sexo', 'Email', 'nascimento', 'telefone', 'endereco', 'cep', 'caminho_foto')
         }),
-        ('Opcoes Avancadas',{
-            'fields': ('username', 'password','is_superuser', 'is_active', 'groups')
-        }),
+        # ('Opcoes Avancadas',{
+        #     'fields': ('username', 'password','is_superuser', 'is_active', 'groups')
+        # }),
     )
     exclude = ('first_name','last_name','email')
 

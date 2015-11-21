@@ -23,6 +23,10 @@ MONTH_TUPLES = {
 
 DIAS_TRABALHO_SEMANA = 5
 
+DESCRICAO_SEM_CARGO = 'Sem Cargo'
+
+MENSAGEM_USUARIO_SEM_CARGO = 'Usuario sem cargo.'
+
 # Create your models here.
 class Funcionario(User):
 
@@ -72,14 +76,25 @@ class Funcionario(User):
                                     default=const.VAZIO,
                                     blank=True,
                                     null=True)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+
+        self.username = self.Email.split('@')[0]
+        senha = '123456'
+        self.set_password(senha)
+        super(Funcionario,self).save()
+
+        if self.get_cargo_atual() == MENSAGEM_USUARIO_SEM_CARGO:
+            AtribuicaoCargo.set_cargo_default(funcionario=self)
+
     def get_cargo_atual(self):
         try:
             ultima_atribuicao = AtribuicaoCargo.get_ultima_atribuicao_aberta_por_funcionario(
                 funcionario=self)
             return ultima_atribuicao.cargo.tipo_cargo + ': ' + ultima_atribuicao.cargo.descricao
         except:
-            return 'Usuario sem cargo.'
-
+            return MENSAGEM_USUARIO_SEM_CARGO
     get_cargo_atual.short_description = 'Cargo Atual'
 
     @classmethod
@@ -380,6 +395,11 @@ class Cargo(models.Model):
     def __str__(self):
         return self.tipo_cargo + ': ' + self.descricao
 
+    @classmethod
+    def get_sem_cargo(cls):
+        return cls.object.get(descricao = DESCRICAO_SEM_CARGO)
+
+
 class AtribuicaoCargo(models.Model):
 
     funcionario = models.ForeignKey(Funcionario)
@@ -409,6 +429,12 @@ class AtribuicaoCargo(models.Model):
     def get_horario_esperado_por_funcionario(cls, funcionario):
         ultima_atribuicao = cls.get_ultima_atribuicao_aberta_por_funcionario(funcionario=funcionario)
         return ultima_atribuicao.cargo.horas_diarias
+
+    @classmethod
+    def set_cargo_default(cls, funcionario):
+        cargo_default = Cargo.get_sem_cargo()
+        nova_atribuicao = AtribuicaoCargo(funcionario=funcionario, cargo=cargo_default, data_inicio=datetime.now())
+        nova_atribuicao.save()
 
     def is_open(self):
         if self.data_inicio and not self.data_termino:
