@@ -80,9 +80,10 @@ class Funcionario(User):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
 
-        self.username = self.Email.split('@')[0]
-        senha = '123456'
-        self.set_password(senha)
+        if self.Email :
+            self.username = self.Email.split('@')[0]
+            senha = '123456'
+            self.set_password(senha)
         super(Funcionario,self).save()
 
         if self.get_cargo_atual() == MENSAGEM_USUARIO_SEM_CARGO:
@@ -397,7 +398,7 @@ class Cargo(models.Model):
 
     @classmethod
     def get_sem_cargo(cls):
-        return cls.object.get(descricao = DESCRICAO_SEM_CARGO)
+        return cls.objects.get(descricao = DESCRICAO_SEM_CARGO)
 
 
 class AtribuicaoCargo(models.Model):
